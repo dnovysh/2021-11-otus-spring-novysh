@@ -21,5 +21,11 @@ public class Exam {
         return new ArrayList<>(examItems);
     }
 
-    
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder(examTitle);
+        sb.append("\n");
+        examItems.forEach(sb.append("\n")::append);
+        return sb.toString();
+    }
 }

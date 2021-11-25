@@ -30,7 +30,8 @@ public class ExamItem {
         sb.append("\n");
         IntStream.range(0, answers.size()).forEach(index -> sb.append("\n")
                 .append(convertAnswerIndexToPosition(index))
-                .append(" ").append(answers.get(index)).append("\n"));
+                .append(" ").append(answers.get(index)));
+        sb.append("\n");
         return sb.toString();
     }
 }
