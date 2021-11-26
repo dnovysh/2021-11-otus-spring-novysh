@@ -12,7 +12,7 @@ public class ExamItem {
 
     public ExamItem(String question, List<Answer> answers, int rightAnswerIndex) {
         this.question = question;
-        this.answers = new ArrayList<Answer>(answers);
+        this.answers = new ArrayList<>(answers);
         this.rightAnswerPosition = convertAnswerIndexToPosition(rightAnswerIndex);
     }
 

@@ -1,7 +1,5 @@
 package ru.otus.domain;
 
-import java.util.ArrayList;
-
 public interface ExamItemBuilder {
 
     ExamItemBuilder addAnswer(Answer answer);
@@ -11,6 +9,8 @@ public interface ExamItemBuilder {
     ExamItemBuilder setRightAnswerIndex(int rightAnswerIndex);
 
     ExamItem build();
+
+    int getLastAnswerIndex();
 
     ExamItemBuilder createNewExamItemBuilder();
 }

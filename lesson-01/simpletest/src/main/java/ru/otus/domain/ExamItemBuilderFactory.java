@@ -1,13 +1,13 @@
 package ru.otus.domain;
 
 public class ExamItemBuilderFactory {
-    private final ExamItemBuilder impl;
+    private final ExamItemBuilder template;
 
-    public ExamItemBuilderFactory(ExamItemBuilder impl) {
-        this.impl = impl;
+    public ExamItemBuilderFactory(ExamItemBuilder template) {
+        this.template = template;
     }
 
-    public ExamItemBuilder create(){
-        return impl.createNewExamItemBuilder();
+    public ExamItemBuilder create() {
+        return template.createNewExamItemBuilder();
     }
 }

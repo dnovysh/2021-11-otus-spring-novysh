@@ -7,19 +7,22 @@ import ru.otus.domain.ExamItem;
 import ru.otus.domain.ExamItemBuilder;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class ExamItemBuilderImpl implements ExamItemBuilder {
 
-    private ArrayList<Answer> answers = null;
+    public static final int ANSWER_INDEX_ERROR = -1;
+
+    private List<Answer> answers = null;
     @Getter
     private String question = "";
     @Getter
-    private int rightAnswerIndex = -1;
+    private int rightAnswerIndex = ANSWER_INDEX_ERROR;
 
     @Override
     public ExamItemBuilder addAnswer(Answer answer) {
         if (answer != null && !StringUtils.isBlank(answer.getText())) {
-            if (answers == null){
+            if (answers == null) {
                 answers = new ArrayList<>();
             }
 
@@ -43,7 +46,7 @@ public class ExamItemBuilderImpl implements ExamItemBuilder {
 
     @Override
     public ExamItem build() {
-        if ( answers == null || answers.size() == 0 ||
+        if (answers == null || answers.isEmpty() ||
                 StringUtils.isBlank(question) ||
                 rightAnswerIndex < 0 ||
                 rightAnswerIndex >= answers.size()) {
@@ -51,6 +54,15 @@ public class ExamItemBuilderImpl implements ExamItemBuilder {
         }
 
         return new ExamItem(question, answers, rightAnswerIndex);
+    }
+
+    @Override
+    public int getLastAnswerIndex() {
+        if (answers == null || answers.isEmpty()) {
+            return ANSWER_INDEX_ERROR;
+        }
+
+        return answers.size() - 1;
     }
 
     @Override
