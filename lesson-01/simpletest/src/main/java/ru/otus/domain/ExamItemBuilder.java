@@ -2,7 +2,9 @@ package ru.otus.domain;
 
 public interface ExamItemBuilder {
 
-    ExamItemBuilder addAnswer(Answer answer);
+    ExamItemBuilder addAnswer(Answer answer) throws IllegalArgumentException;
+
+    boolean tryAddAnswer(Answer answer);
 
     ExamItemBuilder setQuestion(String question);
 

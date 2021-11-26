@@ -22,16 +22,27 @@ public class ExamBuilderImpl implements ExamBuilder {
     }
 
     @Override
-    public ExamBuilder addExamItem(ExamItem examItem) {
-        if (examItem != null){
-            if (examItems == null) {
-                examItems = new ArrayList<>();
-            }
-
-            examItems.add(examItem);
+    public ExamBuilder addExamItem(ExamItem examItem) throws IllegalArgumentException {
+        if (!tryAddExamItem(examItem)) {
+            throw new IllegalArgumentException("The specified ExamItem mustn't be null");
         }
 
         return this;
+    }
+
+    @Override
+    public boolean tryAddExamItem(ExamItem examItem) {
+        if (examItem == null) {
+            return false;
+        }
+
+        if (examItems == null) {
+            examItems = new ArrayList<>();
+        }
+
+        examItems.add(examItem);
+
+        return true;
     }
 
     @Override

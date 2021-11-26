@@ -1,7 +1,10 @@
 package ru.otus.service;
 
+import com.opencsv.exceptions.CsvException;
 import ru.otus.dao.ExamDAO;
 import ru.otus.domain.Exam;
+
+import java.io.IOException;
 
 public class ExamServiceImpl implements ExamService {
 
@@ -12,7 +15,7 @@ public class ExamServiceImpl implements ExamService {
     }
 
     @Override
-    public Exam getExam() {
+    public Exam getExam() throws IOException, CsvException {
         return examDao.read();
     }
 }

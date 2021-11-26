@@ -64,18 +64,15 @@ public class ExamDAOImpl implements ExamDAO {
                         continue;
                     }
 
-                    examItemBuilder.addAnswer(new Answer(answerText));
+                    var answerHasBeenAdded = examItemBuilder.tryAddAnswer(new Answer(answerText));
 
-                    if (containsRightAnswerToken) {
+                    if (answerHasBeenAdded && containsRightAnswerToken) {
                         examItemBuilder.setRightAnswerIndex(examItemBuilder.getLastAnswerIndex());
                     }
                 }
 
                 var examItem = examItemBuilder.build();
-
-                if (examItem != null) {
-                    examBuilder.addExamItem(examItem);
-                }
+                examBuilder.tryAddExamItem(examItem);
             }
         }
 
