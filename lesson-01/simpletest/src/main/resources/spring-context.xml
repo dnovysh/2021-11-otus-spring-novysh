@@ -13,9 +13,14 @@
         <constructor-arg name="template" ref="examItemBuilderTemplate"/>
     </bean>
 
-    <bean id="examDao" class="ru.otus.dao.ExamDAOImpl">
-        <constructor-arg name="fileName" value="/simple-tenses-test.csv"/>
+    <bean id="csvDataFileResourceLoader" class="ru.otus.loader.CsvDataFileResourceLoader">
+        <constructor-arg name="fileName" value="/data/simple-tenses-test.csv"/>
         <constructor-arg name="separator" value="|"/>
+    </bean>
+
+    <bean id="examDao" class="ru.otus.dao.ExamDaoImpl">
+        <constructor-arg name="title" value="Simple tenses test"/>
+        <constructor-arg name="csvDataFileLoader" ref="csvDataFileResourceLoader"/>
         <constructor-arg name="rightAnswerToken" value="&lt;&lt;+&gt;&gt;"/>
         <constructor-arg name="examBuilderFactory" ref="examBuilderFactory"/>
         <constructor-arg name="examItemBuilderFactory" ref="examItemBuilderFactory"/>
@@ -25,8 +30,7 @@
         <constructor-arg ref="examDao"/>
     </bean>
 
-    <bean id="examItemPrinterImplFactory" class="ru.otus.service.ExamItemPrinterImplFactory" />
-
-    <bean id="examPrinterImplFactory" class="ru.otus.service.ExamPrinterImplFactory" />
+    <bean id="examItemPrinterFactory" class="ru.otus.service.ExamItemPrinterImplFactory" />
+    <bean id="examPrinterFactory" class="ru.otus.service.ExamPrinterImplFactory" />
 
 </beans>

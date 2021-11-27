@@ -5,6 +5,6 @@ import ru.otus.domain.Exam;
 
 import java.io.IOException;
 
-public interface ExamDAO {
+public interface ExamDao {
     Exam read() throws IOException, CsvException;
 }

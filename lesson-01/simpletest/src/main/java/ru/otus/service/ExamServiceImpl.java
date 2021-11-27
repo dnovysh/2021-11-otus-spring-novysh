@@ -1,16 +1,16 @@
 package ru.otus.service;
 
 import com.opencsv.exceptions.CsvException;
-import ru.otus.dao.ExamDAO;
+import ru.otus.dao.ExamDao;
 import ru.otus.domain.Exam;
 
 import java.io.IOException;
 
 public class ExamServiceImpl implements ExamService {
 
-    private final ExamDAO examDao;
+    private final ExamDao examDao;
 
-    public ExamServiceImpl(ExamDAO examDao) {
+    public ExamServiceImpl(ExamDao examDao) {
         this.examDao = examDao;
     }
 
