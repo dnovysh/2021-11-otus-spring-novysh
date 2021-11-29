@@ -4,8 +4,6 @@ import com.opencsv.CSVParser;
 import com.opencsv.CSVParserBuilder;
 import com.opencsv.CSVReaderBuilder;
 import com.opencsv.exceptions.CsvException;
-import lombok.var;
-import ru.otus.dao.ExamDaoImpl;
 
 import java.io.BufferedReader;
 import java.io.IOException;
