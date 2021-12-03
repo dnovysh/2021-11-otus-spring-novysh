@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <bean id="examBuilderTemplate" class="ru.otus.util.ExamBuilderImpl"/>
+    <bean id="examBuilderFactory" class="ru.otus.domain.ExamBuilderFactory">
+        <constructor-arg name="template" ref="examBuilderTemplate"/>
+    </bean>
+
+    <bean id="examItemBuilderTemplate" class="ru.otus.util.ExamItemBuilderImpl"/>
+    <bean id="examItemBuilderFactory" class="ru.otus.domain.ExamItemBuilderFactory">
+        <constructor-arg name="template" ref="examItemBuilderTemplate"/>
+    </bean>
+
+    <bean id="csvDataFileResourceLoader" class="ru.otus.loader.CsvDataFileResourceLoader">
+        <constructor-arg name="fileName" value="/data/simple-tenses-test.csv"/>
+        <constructor-arg name="separator" value="|"/>
+    </bean>
+
+    <bean id="examDao" class="ru.otus.dao.ExamDaoImpl">
+        <constructor-arg name="title" value="Simple tenses test"/>
+        <constructor-arg name="csvDataFileLoader" ref="csvDataFileResourceLoader"/>
+        <constructor-arg name="rightAnswerToken" value="&lt;&lt;+&gt;&gt;"/>
+        <constructor-arg name="examBuilderFactory" ref="examBuilderFactory"/>
+        <constructor-arg name="examItemBuilderFactory" ref="examItemBuilderFactory"/>
+    </bean>
+
+    <bean id="examService" class="ru.otus.service.ExamServiceImpl">
+        <constructor-arg ref="examDao"/>
+    </bean>
+
+    <bean id="examItemPrinterFactory" class="ru.otus.service.ExamItemPrinterImplFactory" />
+    <bean id="examPrinterFactory" class="ru.otus.service.ExamPrinterImplFactory" />
+
+</beans>
