@@ -1,16 +1,14 @@
 package ru.otus.domain;
 
-import com.opencsv.exceptions.CsvException;
 import lombok.val;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import ru.otus.config.ExamConfig;
 import ru.otus.dao.ExamDao;
 import ru.otus.dao.ExamDaoImpl;
 import ru.otus.loader.CsvDataFileLoader;
 import ru.otus.loader.CsvDataFileResourceLoader;
 import ru.otus.service.ExamServiceImpl;
-
-import java.io.IOException;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -55,18 +53,15 @@ class ExamIntegrationTest {
 
         Exam exam;
 
-        try {
-            CsvDataFileLoader csvDataFileLoader = new CsvDataFileResourceLoader(
-                    "/data/simple-tenses-test.csv", '|');
 
-            ExamDao examDao = new ExamDaoImpl("Simple tenses test",
-                    "Minimum percentage of correct answers",
-                    80, csvDataFileLoader, "<<+>>");
+        CsvDataFileLoader csvDataFileLoader = new CsvDataFileResourceLoader(
+                "/data/simple-tenses-test.csv", '|');
 
-            exam = new ExamServiceImpl(examDao).getExam();
-        } catch (IOException | CsvException e) {
-            exam = null;
-        }
+        ExamDao examDao = new ExamDaoImpl(new ExamConfig("Simple tenses test",
+                "Minimum percentage of correct answers",
+                80, "<<+>>"), csvDataFileLoader);
+
+        exam = new ExamServiceImpl(examDao).getExam();
 
         val actualExam = exam;
 

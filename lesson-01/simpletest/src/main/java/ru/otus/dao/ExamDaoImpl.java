@@ -1,14 +1,14 @@
 package ru.otus.dao;
 
-import com.opencsv.exceptions.CsvException;
 import org.apache.commons.lang3.StringUtils;
+import ru.otus.config.ExamConfig;
 import ru.otus.domain.Answer;
 import ru.otus.domain.Exam;
 import ru.otus.domain.ExamItem;
 import ru.otus.loader.CsvDataFileLoader;
 
-import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class ExamDaoImpl implements ExamDao {
 
@@ -17,24 +17,21 @@ public class ExamDaoImpl implements ExamDao {
     private final String title;
     private final String minPercentageOfCorrectAnswersLabel;
     private final int minPercentageOfCorrectAnswers;
-
-    private final CsvDataFileLoader csvDataFileLoader;
     private final String rightAnswerToken;
 
-    public ExamDaoImpl(String title,
-                       String minPercentageOfCorrectAnswersLabel,
-                       int minPercentageOfCorrectAnswers,
-                       CsvDataFileLoader csvDataFileLoader,
-                       String rightAnswerToken) {
-        this.title = (title == null) ? "" : title;
-        this.minPercentageOfCorrectAnswersLabel = minPercentageOfCorrectAnswersLabel;
-        this.minPercentageOfCorrectAnswers = minPercentageOfCorrectAnswers;
+    private final CsvDataFileLoader csvDataFileLoader;
+
+    public ExamDaoImpl(ExamConfig examConfig, CsvDataFileLoader csvDataFileLoader) {
+        this.title = examConfig.getTitle();
+        this.minPercentageOfCorrectAnswersLabel = examConfig.getMinPercentageOfCorrectAnswersLabel();
+        this.minPercentageOfCorrectAnswers = examConfig.getMinPercentageOfCorrectAnswers();
+        this.rightAnswerToken = examConfig.getRightAnswerToken();
+
         this.csvDataFileLoader = csvDataFileLoader;
-        this.rightAnswerToken = rightAnswerToken;
     }
 
     @Override
-    public Exam read() throws IOException, CsvException {
+    public Exam read() {
 
         var rows = csvDataFileLoader.load();
 
@@ -76,15 +73,28 @@ public class ExamDaoImpl implements ExamDao {
                 }
             }
 
-            if (answers.isEmpty() || StringUtils.isBlank(question) || rightAnswerIndex == NO_RIGHT_ANSWER_INDEX) {
-                continue;
+            if (StringUtils.isBlank(question)) {
+                throw new RuntimeException(String.format("The question is not specified in the test item line:\n%s\n",
+                        Arrays.toString(row)));
+            }
+
+            if (answers.isEmpty()) {
+                throw new RuntimeException(String.format("There are no answers in the test item line:\n%s\n",
+                        Arrays.toString(row)));
+            }
+
+            if (rightAnswerIndex == NO_RIGHT_ANSWER_INDEX) {
+                throw new RuntimeException(
+                        String.format("There is no correct answer in the test item line:\n%s\n" +
+                                        "right answer token:%s\n",
+                                Arrays.toString(row), rightAnswerToken));
             }
 
             examItems.add(new ExamItem(question, answers, rightAnswerIndex));
         }
 
         if (examItems.isEmpty()) {
-            return null;
+            throw new RuntimeException("There are no tasks in the test");
         }
 
         return new Exam(title, minPercentageOfCorrectAnswersLabel, minPercentageOfCorrectAnswers, examItems);

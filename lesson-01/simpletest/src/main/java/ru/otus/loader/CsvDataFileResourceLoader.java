@@ -23,12 +23,14 @@ public class CsvDataFileResourceLoader implements CsvDataFileLoader {
     }
 
     @Override
-    public List<String[]> load() throws IOException, CsvException {
+    public List<String[]> load() {
         try (var br = new BufferedReader(new InputStreamReader(
                 Objects.requireNonNull(getClass().getResourceAsStream(fileName)), StandardCharsets.UTF_8));
              var reader = new CSVReaderBuilder(br).withCSVParser(parser).build()) {
 
             return reader.readAll();
+        } catch (IOException | CsvException e) {
+            throw new RuntimeException(e.getMessage(), e);
         }
     }
 }

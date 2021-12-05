@@ -17,21 +17,26 @@
         <constructor-arg name="separator" value="${csv-loader.separator}"/>
     </bean>
 
-    <bean id="examDao" class="ru.otus.dao.ExamDaoImpl">
+    <bean id="examConfig" class="ru.otus.config.ExamConfig">
         <constructor-arg name="title" value="${exam-config.title}"/>
         <constructor-arg name="minPercentageOfCorrectAnswersLabel"
                          value="${exam-config.min-percentage-of-correct-answers-label}"/>
         <constructor-arg name="minPercentageOfCorrectAnswers"
                          value="${exam-config.min-percentage-of-correct-answers}"/>
+        <constructor-arg name="rightAnswerToken" value="${exam-config.right-answer-token}"/>
+    </bean>
+
+    <bean id="examDao" class="ru.otus.dao.ExamDaoImpl">
+        <constructor-arg name="examConfig" ref="examConfig"/>
         <constructor-arg name="csvDataFileLoader" ref="csvDataFileResourceLoader"/>
-        <constructor-arg name="rightAnswerToken" value="&lt;&lt;+&gt;&gt;"/>
     </bean>
 
     <bean id="examService" class="ru.otus.service.ExamServiceImpl">
         <constructor-arg ref="examDao"/>
     </bean>
 
-    <bean id="examItemPrinterFactory" class="ru.otus.service.ExamItemPrinterImplFactory" />
-    <bean id="examPrinterFactory" class="ru.otus.service.ExamPrinterImplFactory" />
+    <bean id="runner" class="ru.otus.runner.ConsoleRunner">
+        <constructor-arg ref="examService"/>
+    </bean>
 
 </beans>

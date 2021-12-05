@@ -1,11 +1,9 @@
 package ru.otus.loader;
 
-import com.opencsv.exceptions.CsvException;
 import lombok.val;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import java.io.IOException;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -45,11 +43,7 @@ class CsvDataFileResourceLoaderTest {
         // act
         List<String[]> loadedData;
 
-        try {
-            loadedData = csvDataFileLoader.load();
-        } catch (IOException | CsvException e) {
-            loadedData = null;
-        }
+        loadedData = csvDataFileLoader.load();
 
         val actual = loadedData;
 
