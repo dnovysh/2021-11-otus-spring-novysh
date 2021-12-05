@@ -1,15 +1,6 @@
 package ru.otus.domain;
 
-import lombok.Getter;
-
-public class Answer {
-
-    @Getter
-    private final String text;
-
-    public Answer(String text) {
-        this.text = text;
-    }
+public record Answer(String text) {
 
     @Override
     public String toString() {

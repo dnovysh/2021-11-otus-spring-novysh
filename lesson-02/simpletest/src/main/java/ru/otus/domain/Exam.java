@@ -35,18 +35,20 @@ public class Exam implements Iterable<ExamItem> {
         return examItems.get(index);
     }
 
+    public String getTitleBlock() {
+        return String.format("%s\n\n%s : %s%%\n\n",
+                examTitle, minPercentageOfCorrectAnswersLabel, minPercentageOfCorrectAnswers);
+    }
+
     @Override
     public String toString() {
-        String titleBlock = String.format("%s\n\n%s : %s%%\n\n",
-                examTitle, minPercentageOfCorrectAnswersLabel, minPercentageOfCorrectAnswers);
-
         return examItems.stream().map(ExamItem::toString)
-                .collect(Collectors.joining("\n", titleBlock , ""));
+                .collect(Collectors.joining("\n", getTitleBlock() , ""));
     }
 
     @Override
     public Iterator<ExamItem> iterator() {
-        return new Iterator<ExamItem>() {
+        return new Iterator<>() {
 
             private int currentIndex = 0;
 

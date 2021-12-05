@@ -14,19 +14,11 @@ public class ExamDaoImpl implements ExamDao {
 
     private static final int NO_RIGHT_ANSWER_INDEX = -1;
 
-    private final String title;
-    private final String minPercentageOfCorrectAnswersLabel;
-    private final int minPercentageOfCorrectAnswers;
-    private final String rightAnswerToken;
-
+    private final ExamConfig examConfig;
     private final CsvDataFileLoader csvDataFileLoader;
 
     public ExamDaoImpl(ExamConfig examConfig, CsvDataFileLoader csvDataFileLoader) {
-        this.title = examConfig.getTitle();
-        this.minPercentageOfCorrectAnswersLabel = examConfig.getMinPercentageOfCorrectAnswersLabel();
-        this.minPercentageOfCorrectAnswers = examConfig.getMinPercentageOfCorrectAnswers();
-        this.rightAnswerToken = examConfig.getRightAnswerToken();
-
+        this.examConfig = examConfig;
         this.csvDataFileLoader = csvDataFileLoader;
     }
 
@@ -57,9 +49,9 @@ public class ExamDaoImpl implements ExamDao {
                     continue;
                 }
 
-                var containsRightAnswerToken = columnValue.contains(rightAnswerToken);
+                var containsRightAnswerToken = columnValue.contains(examConfig.rightAnswerToken());
                 var answerText = containsRightAnswerToken
-                        ? columnValue.replace(rightAnswerToken, "").trim()
+                        ? columnValue.replace(examConfig.rightAnswerToken(), "").trim()
                         : columnValue;
 
                 if (StringUtils.isBlank(answerText)) {
@@ -87,7 +79,7 @@ public class ExamDaoImpl implements ExamDao {
                 throw new RuntimeException(
                         String.format("There is no correct answer in the test item line:\n%s\n" +
                                         "right answer token:%s\n",
-                                Arrays.toString(row), rightAnswerToken));
+                                Arrays.toString(row), examConfig.rightAnswerToken()));
             }
 
             examItems.add(new ExamItem(question, answers, rightAnswerIndex));
@@ -97,6 +89,9 @@ public class ExamDaoImpl implements ExamDao {
             throw new RuntimeException("There are no tasks in the test");
         }
 
-        return new Exam(title, minPercentageOfCorrectAnswersLabel, minPercentageOfCorrectAnswers, examItems);
+        return new Exam(examConfig.title(),
+                examConfig.minPercentageOfCorrectAnswersLabel(),
+                examConfig.minPercentageOfCorrectAnswers(),
+                examItems);
     }
 }

@@ -1,17 +1,9 @@
 package ru.otus.config;
 
-import lombok.Getter;
-
-public class ExamConfig {
-
-    @Getter
-    private final String title;
-    @Getter
-    private final String minPercentageOfCorrectAnswersLabel;
-    @Getter
-    private final int minPercentageOfCorrectAnswers;
-    @Getter
-    private final String rightAnswerToken;
+public record ExamConfig(String title,
+                         String minPercentageOfCorrectAnswersLabel,
+                         int minPercentageOfCorrectAnswers,
+                         String rightAnswerToken) {
 
     public ExamConfig(String title, String minPercentageOfCorrectAnswersLabel,
                       int minPercentageOfCorrectAnswers, String rightAnswerToken) {
