@@ -4,40 +4,51 @@ import com.opencsv.exceptions.CsvException;
 import org.apache.commons.lang3.StringUtils;
 import ru.otus.domain.Answer;
 import ru.otus.domain.Exam;
-import ru.otus.domain.ExamBuilderFactory;
-import ru.otus.domain.ExamItemBuilderFactory;
+import ru.otus.domain.ExamItem;
 import ru.otus.loader.CsvDataFileLoader;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 public class ExamDaoImpl implements ExamDao {
 
+    private static final int NO_RIGHT_ANSWER_INDEX = -1;
+
     private final String title;
+    private final String minPercentageOfCorrectAnswersLabel;
+    private final int minPercentageOfCorrectAnswers;
+
     private final CsvDataFileLoader csvDataFileLoader;
     private final String rightAnswerToken;
-    private final ExamBuilderFactory examBuilderFactory;
-    private final ExamItemBuilderFactory examItemBuilderFactory;
 
-    public ExamDaoImpl(String title, CsvDataFileLoader csvDataFileLoader, String rightAnswerToken,
-                       ExamBuilderFactory examBuilderFactory, ExamItemBuilderFactory examItemBuilderFactory) {
-        this.title = title;
+    public ExamDaoImpl(String title,
+                       String minPercentageOfCorrectAnswersLabel,
+                       int minPercentageOfCorrectAnswers,
+                       CsvDataFileLoader csvDataFileLoader,
+                       String rightAnswerToken) {
+        this.title = (title == null) ? "" : title;
+        this.minPercentageOfCorrectAnswersLabel = minPercentageOfCorrectAnswersLabel;
+        this.minPercentageOfCorrectAnswers = minPercentageOfCorrectAnswers;
         this.csvDataFileLoader = csvDataFileLoader;
         this.rightAnswerToken = rightAnswerToken;
-        this.examBuilderFactory = examBuilderFactory;
-        this.examItemBuilderFactory = examItemBuilderFactory;
     }
 
     @Override
     public Exam read() throws IOException, CsvException {
-        var examBuilder = examBuilderFactory.create();
-        examBuilder.setTitle(title);
 
         var rows = csvDataFileLoader.load();
 
+        var examItems = new ArrayList<ExamItem>();
+
         for (String[] row : rows) {
-            var examItemBuilder = examItemBuilderFactory.create();
+
+            String question = "";
+            var answers = new ArrayList<Answer>();
+            int rightAnswerIndex = NO_RIGHT_ANSWER_INDEX;
+
 
             for (int i = 0, rowLength = row.length; i < rowLength; i++) {
+
                 String columnValue = row[i].trim();
 
                 if (StringUtils.isBlank(columnValue)) {
@@ -45,29 +56,37 @@ public class ExamDaoImpl implements ExamDao {
                 }
 
                 if (i == 0) {
-                    examItemBuilder.setQuestion(columnValue);
+                    question = columnValue;
                     continue;
                 }
 
                 var containsRightAnswerToken = columnValue.contains(rightAnswerToken);
                 var answerText = containsRightAnswerToken
-                        ? columnValue.replace(rightAnswerToken, "").trim() : columnValue;
+                        ? columnValue.replace(rightAnswerToken, "").trim()
+                        : columnValue;
 
                 if (StringUtils.isBlank(answerText)) {
                     continue;
                 }
 
-                var answerHasBeenAdded = examItemBuilder.tryAddAnswer(new Answer(answerText));
+                answers.add(new Answer(answerText));
 
-                if (answerHasBeenAdded && containsRightAnswerToken) {
-                    examItemBuilder.setRightAnswerIndex(examItemBuilder.getLastAnswerIndex());
+                if (containsRightAnswerToken) {
+                    rightAnswerIndex = answers.size() - 1;
                 }
             }
 
-            var examItem = examItemBuilder.build();
-            examBuilder.tryAddExamItem(examItem);
+            if (answers.isEmpty() || StringUtils.isBlank(question) || rightAnswerIndex == NO_RIGHT_ANSWER_INDEX) {
+                continue;
+            }
+
+            examItems.add(new ExamItem(question, answers, rightAnswerIndex));
         }
 
-        return examBuilder.build();
+        if (examItems.isEmpty()) {
+            return null;
+        }
+
+        return new Exam(title, minPercentageOfCorrectAnswersLabel, minPercentageOfCorrectAnswers, examItems);
     }
 }

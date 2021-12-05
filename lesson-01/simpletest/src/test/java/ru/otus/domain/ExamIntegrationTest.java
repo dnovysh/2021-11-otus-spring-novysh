@@ -9,8 +9,6 @@ import ru.otus.dao.ExamDaoImpl;
 import ru.otus.loader.CsvDataFileLoader;
 import ru.otus.loader.CsvDataFileResourceLoader;
 import ru.otus.service.ExamServiceImpl;
-import ru.otus.util.ExamBuilderImpl;
-import ru.otus.util.ExamItemBuilderImpl;
 
 import java.io.IOException;
 
@@ -22,6 +20,8 @@ class ExamIntegrationTest {
     @DisplayName("Exam integration test")
     void testToString() {
         String expected = "Simple tenses test\n" +
+                "\n" +
+                "Minimum percentage of correct answers : 80%\n" +
                 "\n" +
                 "Sharon ____________ to San Fransisco last month.\n" +
                 "\n" +
@@ -59,9 +59,9 @@ class ExamIntegrationTest {
             CsvDataFileLoader csvDataFileLoader = new CsvDataFileResourceLoader(
                     "/data/simple-tenses-test.csv", '|');
 
-            ExamDao examDao = new ExamDaoImpl("Simple tenses test", csvDataFileLoader, "<<+>>",
-                    new ExamBuilderFactory(new ExamBuilderImpl()),
-                    new ExamItemBuilderFactory(new ExamItemBuilderImpl()));
+            ExamDao examDao = new ExamDaoImpl("Simple tenses test",
+                    "Minimum percentage of correct answers",
+                    80, csvDataFileLoader, "<<+>>");
 
             exam = new ExamServiceImpl(examDao).getExam();
         } catch (IOException | CsvException e) {
