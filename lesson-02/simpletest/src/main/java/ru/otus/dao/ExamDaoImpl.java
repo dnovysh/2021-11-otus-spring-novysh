@@ -1,43 +1,51 @@
 package ru.otus.dao;
 
-import com.opencsv.exceptions.CsvException;
 import org.apache.commons.lang3.StringUtils;
+import ru.otus.config.ExamConfig;
 import ru.otus.domain.Answer;
 import ru.otus.domain.Exam;
-import ru.otus.domain.ExamBuilderFactory;
-import ru.otus.domain.ExamItemBuilderFactory;
+import ru.otus.domain.ExamItem;
 import ru.otus.loader.CsvDataFileLoader;
 
-import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 public class ExamDaoImpl implements ExamDao {
 
-    private final String title;
-    private final CsvDataFileLoader csvDataFileLoader;
-    private final String rightAnswerToken;
-    private final ExamBuilderFactory examBuilderFactory;
-    private final ExamItemBuilderFactory examItemBuilderFactory;
+    private static final int NO_RIGHT_ANSWER_INDEX = -1;
 
-    public ExamDaoImpl(String title, CsvDataFileLoader csvDataFileLoader, String rightAnswerToken,
-                       ExamBuilderFactory examBuilderFactory, ExamItemBuilderFactory examItemBuilderFactory) {
-        this.title = title;
+    private final String title;
+    private final String minPercentageOfCorrectAnswersLabel;
+    private final int minPercentageOfCorrectAnswers;
+    private final String rightAnswerToken;
+
+    private final CsvDataFileLoader csvDataFileLoader;
+
+    public ExamDaoImpl(ExamConfig examConfig, CsvDataFileLoader csvDataFileLoader) {
+        this.title = examConfig.getTitle();
+        this.minPercentageOfCorrectAnswersLabel = examConfig.getMinPercentageOfCorrectAnswersLabel();
+        this.minPercentageOfCorrectAnswers = examConfig.getMinPercentageOfCorrectAnswers();
+        this.rightAnswerToken = examConfig.getRightAnswerToken();
+
         this.csvDataFileLoader = csvDataFileLoader;
-        this.rightAnswerToken = rightAnswerToken;
-        this.examBuilderFactory = examBuilderFactory;
-        this.examItemBuilderFactory = examItemBuilderFactory;
     }
 
     @Override
-    public Exam read() throws IOException, CsvException {
-        var examBuilder = examBuilderFactory.create();
-        examBuilder.setTitle(title);
+    public Exam read() {
 
         var rows = csvDataFileLoader.load();
 
+        var examItems = new ArrayList<ExamItem>();
+
         for (String[] row : rows) {
-            var examItemBuilder = examItemBuilderFactory.create();
+
+            String question = "";
+            var answers = new ArrayList<Answer>();
+            int rightAnswerIndex = NO_RIGHT_ANSWER_INDEX;
+
 
             for (int i = 0, rowLength = row.length; i < rowLength; i++) {
+
                 String columnValue = row[i].trim();
 
                 if (StringUtils.isBlank(columnValue)) {
@@ -45,29 +53,50 @@ public class ExamDaoImpl implements ExamDao {
                 }
 
                 if (i == 0) {
-                    examItemBuilder.setQuestion(columnValue);
+                    question = columnValue;
                     continue;
                 }
 
                 var containsRightAnswerToken = columnValue.contains(rightAnswerToken);
                 var answerText = containsRightAnswerToken
-                        ? columnValue.replace(rightAnswerToken, "").trim() : columnValue;
+                        ? columnValue.replace(rightAnswerToken, "").trim()
+                        : columnValue;
 
                 if (StringUtils.isBlank(answerText)) {
                     continue;
                 }
 
-                var answerHasBeenAdded = examItemBuilder.tryAddAnswer(new Answer(answerText));
+                answers.add(new Answer(answerText));
 
-                if (answerHasBeenAdded && containsRightAnswerToken) {
-                    examItemBuilder.setRightAnswerIndex(examItemBuilder.getLastAnswerIndex());
+                if (containsRightAnswerToken) {
+                    rightAnswerIndex = answers.size() - 1;
                 }
             }
 
-            var examItem = examItemBuilder.build();
-            examBuilder.tryAddExamItem(examItem);
+            if (StringUtils.isBlank(question)) {
+                throw new RuntimeException(String.format("The question is not specified in the test item line:\n%s\n",
+                        Arrays.toString(row)));
+            }
+
+            if (answers.isEmpty()) {
+                throw new RuntimeException(String.format("There are no answers in the test item line:\n%s\n",
+                        Arrays.toString(row)));
+            }
+
+            if (rightAnswerIndex == NO_RIGHT_ANSWER_INDEX) {
+                throw new RuntimeException(
+                        String.format("There is no correct answer in the test item line:\n%s\n" +
+                                        "right answer token:%s\n",
+                                Arrays.toString(row), rightAnswerToken));
+            }
+
+            examItems.add(new ExamItem(question, answers, rightAnswerIndex));
         }
 
-        return examBuilder.build();
+        if (examItems.isEmpty()) {
+            throw new RuntimeException("There are no tasks in the test");
+        }
+
+        return new Exam(title, minPercentageOfCorrectAnswersLabel, minPercentageOfCorrectAnswers, examItems);
     }
 }
