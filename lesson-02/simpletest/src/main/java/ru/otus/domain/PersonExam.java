@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-public class PersonExam implements Iterable<ExamItemPersonAnswer>{
+public class PersonExam implements Iterable<ExamItemPersonAnswer> {
 
     private static final int NO_ANSWER_YET = -1;
 
@@ -47,5 +47,10 @@ public class PersonExam implements Iterable<ExamItemPersonAnswer>{
                 throw new UnsupportedOperationException();
             }
         };
+    }
+
+    public int calculatePercentageOfCorrectAnswers() {
+        return (int) examItemPersonAnswers.stream()
+                .filter(ExamItemPersonAnswer::isRight).count() * 100 / examItemPersonAnswers.size();
     }
 }

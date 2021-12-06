@@ -8,6 +8,7 @@
             <list>
                 <value>classpath:application.properties</value>
                 <value>classpath:exam.properties</value>
+                <value>classpath:examination-service.properties</value>
             </list>
         </property>
     </bean>
@@ -35,8 +36,20 @@
         <constructor-arg ref="examDao"/>
     </bean>
 
-    <bean id="runner" class="ru.otus.runner.ConsoleRunner">
+    <bean id="examinationServiceConfig" class="ru.otus.config.ExaminationServiceConfig">
+        <constructor-arg name="inputNameTitle" value="${examination-service.input-name-title}"/>
+        <constructor-arg name="inputFirstNameLabel" value="${examination-service.input-first-name-label}"/>
+        <constructor-arg name="inputLastNameLabel" value="${examination-service.input-last-name-label}"/>
+        <constructor-arg name="inputAnswerLabel" value="${examination-service.input-answer-label}"/>
+        <constructor-arg name="cancellationToken" value="${examination-service.cancellation-token}"/>
+        <constructor-arg name="resultMessage" value="${examination-service.result-message}"/>
+        <constructor-arg name="passedMessage" value="${examination-service.passed}"/>
+        <constructor-arg name="failedMessage" value="${examination-service.failed}"/>
+    </bean>
+
+    <bean id="consoleExaminationService" class="ru.otus.service.ConsoleExaminationService">
         <constructor-arg ref="examService"/>
+        <constructor-arg ref="examinationServiceConfig"/>
     </bean>
 
 </beans>
