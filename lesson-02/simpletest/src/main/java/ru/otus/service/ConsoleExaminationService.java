@@ -1,6 +1,7 @@
 package ru.otus.service;
 
 import lombok.val;
+import org.springframework.stereotype.Component;
 import ru.otus.config.ExaminationServiceConfig;
 import ru.otus.domain.ExamItemPersonAnswer;
 import ru.otus.domain.Person;
@@ -8,6 +9,7 @@ import ru.otus.domain.PersonExam;
 
 import java.util.Scanner;
 
+@Component
 public class ConsoleExaminationService implements ExaminationService {
 
     private final ExamService examService;

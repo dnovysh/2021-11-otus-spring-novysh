@@ -1,8 +1,10 @@
 package ru.otus.service;
 
+import org.springframework.stereotype.Component;
 import ru.otus.dao.ExamDao;
 import ru.otus.domain.Exam;
 
+@Component
 public class ExamServiceImpl implements ExamService {
 
     private final ExamDao examDao;

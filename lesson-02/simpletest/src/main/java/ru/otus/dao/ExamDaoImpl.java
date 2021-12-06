@@ -1,6 +1,7 @@
 package ru.otus.dao;
 
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.stereotype.Component;
 import ru.otus.config.ExamConfig;
 import ru.otus.domain.Answer;
 import ru.otus.domain.Exam;
@@ -10,6 +11,7 @@ import ru.otus.loader.CsvDataFileLoader;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+@Component
 public class ExamDaoImpl implements ExamDao {
 
     private static final int NO_RIGHT_ANSWER_INDEX = -1;
