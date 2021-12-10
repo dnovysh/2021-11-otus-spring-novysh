@@ -2,7 +2,7 @@ package ru.otus.domain;
 
 import lombok.Getter;
 
-public class ExamItemPersonAnswer {
+public class PersonExamItemAnswer {
     @Getter
     private final ExamItem examItem;
     @Getter
@@ -10,7 +10,7 @@ public class ExamItemPersonAnswer {
     @Getter
     private boolean isRight;
 
-    public ExamItemPersonAnswer(ExamItem examItem, int answerPosition) {
+    public PersonExamItemAnswer(ExamItem examItem, int answerPosition) {
         this.examItem = examItem;
         setAnswer(answerPosition);
     }

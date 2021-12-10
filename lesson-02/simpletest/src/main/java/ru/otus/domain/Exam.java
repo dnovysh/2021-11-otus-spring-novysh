@@ -27,14 +27,6 @@ public class Exam implements Iterable<ExamItem> {
         this.examItems = new ArrayList<>(examItems);
     }
 
-    public List<ExamItem> getExamItems() {
-        return new ArrayList<>(examItems);
-    }
-
-    public ExamItem getExamItem(int index) {
-        return examItems.get(index);
-    }
-
     public String getTitleBlock() {
         return String.format("%s\n\n%s : %s%%\n\n",
                 examTitle, minPercentageOfCorrectAnswersLabel, minPercentageOfCorrectAnswers);
@@ -43,29 +35,11 @@ public class Exam implements Iterable<ExamItem> {
     @Override
     public String toString() {
         return examItems.stream().map(ExamItem::toString)
-                .collect(Collectors.joining("\n", getTitleBlock() , ""));
+                .collect(Collectors.joining("\n", getTitleBlock(), ""));
     }
 
     @Override
     public Iterator<ExamItem> iterator() {
-        return new Iterator<>() {
-
-            private int currentIndex = 0;
-
-            @Override
-            public boolean hasNext() {
-                return currentIndex < examItems.size();
-            }
-
-            @Override
-            public ExamItem next() {
-                return examItems.get(currentIndex++);
-            }
-
-            @Override
-            public void remove() {
-                throw new UnsupportedOperationException();
-            }
-        };
+        return examItems.iterator();
     }
 }

@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-public class PersonExam implements Iterable<ExamItemPersonAnswer> {
+public class PersonExam implements Iterable<PersonExamItemAnswer> {
 
     private static final int NO_ANSWER_YET = -1;
 
@@ -14,43 +14,31 @@ public class PersonExam implements Iterable<ExamItemPersonAnswer> {
     private final Person person;
     @Getter
     private final Exam exam;
-    private final List<ExamItemPersonAnswer> examItemPersonAnswers;
+    private final List<PersonExamItemAnswer> personExamItemAnswers;
 
     public PersonExam(Person person, Exam exam) {
         this.person = person;
         this.exam = exam;
-        this.examItemPersonAnswers = new ArrayList<>();
+        this.personExamItemAnswers = new ArrayList<>();
 
         for (ExamItem examItem : exam) {
-            this.examItemPersonAnswers.add(new ExamItemPersonAnswer(examItem, NO_ANSWER_YET));
+            this.personExamItemAnswers.add(new PersonExamItemAnswer(examItem, NO_ANSWER_YET));
         }
     }
 
     @Override
-    public Iterator<ExamItemPersonAnswer> iterator() {
-        return new Iterator<>() {
-
-            private int currentIndex = 0;
-
-            @Override
-            public boolean hasNext() {
-                return currentIndex < examItemPersonAnswers.size();
-            }
-
-            @Override
-            public ExamItemPersonAnswer next() {
-                return examItemPersonAnswers.get(currentIndex++);
-            }
-
-            @Override
-            public void remove() {
-                throw new UnsupportedOperationException();
-            }
-        };
+    public Iterator<PersonExamItemAnswer> iterator() {
+        return personExamItemAnswers.iterator();
     }
 
-    public int calculatePercentageOfCorrectAnswers() {
-        return (int) examItemPersonAnswers.stream()
-                .filter(ExamItemPersonAnswer::isRight).count() * 100 / examItemPersonAnswers.size();
+    public PersonExamResult calculateResult() {
+        int minPercentageOfCorrectAnswers = exam.getMinPercentageOfCorrectAnswers();
+
+        int actualPercentageOfCorrectAnswers = (int) personExamItemAnswers.stream()
+                .filter(PersonExamItemAnswer::isRight).count() * 100 / personExamItemAnswers.size();
+
+        return new PersonExamResult(minPercentageOfCorrectAnswers,
+                actualPercentageOfCorrectAnswers,
+                actualPercentageOfCorrectAnswers >= minPercentageOfCorrectAnswers);
     }
 }

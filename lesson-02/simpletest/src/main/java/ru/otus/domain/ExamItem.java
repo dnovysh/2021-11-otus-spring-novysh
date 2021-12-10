@@ -16,10 +16,6 @@ public class ExamItem {
         this.rightAnswerPosition = convertAnswerIndexToPosition(rightAnswerIndex);
     }
 
-    private int convertAnswerIndexToPosition(int answerIndex) {
-        return answerIndex + 1;
-    }
-
     public boolean answerIsRight(int answerPosition) {
         return answerPosition == rightAnswerPosition;
     }
@@ -33,5 +29,9 @@ public class ExamItem {
                 .append(" ").append(answers.get(index)));
         sb.append("\n");
         return sb.toString();
+    }
+
+    private int convertAnswerIndexToPosition(int answerIndex) {
+        return answerIndex + 1;
     }
 }

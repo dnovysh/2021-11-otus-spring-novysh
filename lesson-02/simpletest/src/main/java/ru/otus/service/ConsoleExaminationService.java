@@ -3,9 +3,10 @@ package ru.otus.service;
 import lombok.val;
 import org.springframework.stereotype.Component;
 import ru.otus.config.ExaminationServiceConfig;
-import ru.otus.domain.ExamItemPersonAnswer;
 import ru.otus.domain.Person;
 import ru.otus.domain.PersonExam;
+import ru.otus.domain.PersonExamItemAnswer;
+import ru.otus.domain.PersonExamResult;
 
 import java.util.Scanner;
 
@@ -21,45 +22,23 @@ public class ConsoleExaminationService implements ExaminationService {
         this.examinationServiceConfig = examinationServiceConfig;
     }
 
+    @Override
     public void conductTest() {
         val exam = examService.getExam();
         Scanner in = new Scanner(System.in);
 
         System.out.print(exam.getTitleBlock());
 
-        System.out.println(examinationServiceConfig.inputNameTitle());
-        System.out.print(examinationServiceConfig.inputFirstNameLabel());
-        val firstName = in.next().trim();
-        System.out.print(examinationServiceConfig.inputLastNameLabel());
-        val lastName = in.next();
-
-        val person = new Person(firstName, lastName);
+        Person person = getPersonInput(in, examinationServiceConfig);
         val personExam = new PersonExam(person, exam);
 
-        for (ExamItemPersonAnswer answer : personExam) {
-            System.out.printf("\n\n%s\n", answer.getExamItem());
-
-            int answerInput = getIntInput(in, examinationServiceConfig.inputAnswerLabel());
-
-            if (answerInput == examinationServiceConfig.cancellationToken()) {
-                break;
-            }
-
-            answer.setAnswer(answerInput);
-        }
+        populateAnswersFromInput(in, personExam, examinationServiceConfig);
 
         in.close();
 
-        int percentageOfCorrectAnswers = personExam.calculatePercentageOfCorrectAnswers();
-        int minPercentageOfCorrectAnswers = personExam.getExam().getMinPercentageOfCorrectAnswers();
-        boolean testPassed = percentageOfCorrectAnswers >= minPercentageOfCorrectAnswers;
+        PersonExamResult result = personExam.calculateResult();
 
-        System.out.printf("\n%s%s%s%%\n%s\n", personExam.getPerson(),
-                examinationServiceConfig.resultMessage(),
-                percentageOfCorrectAnswers,
-                testPassed
-                        ? examinationServiceConfig.passedMessage()
-                        : examinationServiceConfig.failedMessage());
+        printResult(person, result, examinationServiceConfig);
     }
 
     private int getIntInput(Scanner in, String label) {
@@ -72,5 +51,41 @@ public class ConsoleExaminationService implements ExaminationService {
                 in.next();
             }
         }
+    }
+
+    private Person getPersonInput(Scanner in, ExaminationServiceConfig serviceConfig) {
+        System.out.println(serviceConfig.inputNameTitle());
+        System.out.print(serviceConfig.inputFirstNameLabel());
+        val firstName = in.next().trim();
+        System.out.print(serviceConfig.inputLastNameLabel());
+        val lastName = in.next();
+
+        return new Person(firstName, lastName);
+    }
+
+    private void populateAnswersFromInput(Scanner in,
+                                          PersonExam personExam,
+                                          ExaminationServiceConfig serviceConfig) {
+        for (PersonExamItemAnswer answer : personExam) {
+            System.out.printf("\n\n%s\n", answer.getExamItem());
+
+            int answerInput = getIntInput(in, serviceConfig.inputAnswerLabel());
+
+            if (answerInput == serviceConfig.cancellationToken()) {
+                break;
+            }
+
+            answer.setAnswer(answerInput);
+        }
+    }
+
+    private void printResult(Person person,
+                             PersonExamResult result,
+                             ExaminationServiceConfig serviceConfig) {
+        System.out.printf("\n%s%s%s%%\n%s\n",
+                person,
+                serviceConfig.resultMessage(),
+                result.actualPercentageOfCorrectAnswers(),
+                result.passed() ? serviceConfig.passedMessage() : serviceConfig.failedMessage());
     }
 }
