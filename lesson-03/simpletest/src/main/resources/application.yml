@@ -1,0 +1,14 @@
+spring:
+  web:
+    locale: en
+  jackson:
+    property-naming-strategy: LOWER_CAMEL_CASE
+    serialization:
+      indent-output: true
+
+exam:
+  header-loader:
+    file-name: /data/simple-tenses-test-header-${spring.web.locale}.json
+  csv-loader:
+    file-name: /data/simple-tenses-test-items-${spring.web.locale}.csv
+    separator: '|'
