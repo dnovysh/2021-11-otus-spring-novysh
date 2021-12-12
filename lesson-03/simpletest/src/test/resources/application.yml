@@ -1,0 +1,20 @@
+spring:
+  config:
+    activate:
+      on-profile: test-csv-loader-positive
+exam:
+  csv-loader:
+    file-name: /data/simple-tenses-test-items.csv
+    separator: '|'
+
+---
+
+spring:
+  config:
+    activate:
+      on-profile: test-csv-loader-negative
+exam:
+  csv-loader:
+    file-name: /data/not-existing-file.csv
+    separator: '|'
+---

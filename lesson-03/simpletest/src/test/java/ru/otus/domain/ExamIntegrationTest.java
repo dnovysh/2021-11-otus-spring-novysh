@@ -18,7 +18,7 @@ class ExamIntegrationTest {
     void testToString() {
         String expected = "Simple tenses test\n" +
                 "\n" +
-                "Minimum percentage of correct answers : 80%\n" +
+                "Minimum percentage of correct answers: 80%\n" +
                 "\n" +
                 "Sharon ____________ to San Fransisco last month.\n" +
                 "\n" +

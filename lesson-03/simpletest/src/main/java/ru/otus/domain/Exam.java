@@ -28,7 +28,7 @@ public class Exam implements Iterable<ExamItem> {
     }
 
     public String getTitleBlock() {
-        return String.format("%s\n\n%s : %s%%\n\n",
+        return String.format("%s\n\n%s: %s%%\n\n",
                 examTitle, minPercentageOfCorrectAnswersLabel, minPercentageOfCorrectAnswers);
     }
 

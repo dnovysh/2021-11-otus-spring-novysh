@@ -3,30 +3,33 @@ package ru.otus.loader;
 import lombok.val;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.boot.test.context.ConfigDataApplicationContextInitializer;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@DisplayName("CSV data file loader test")
-class CsvDataFileLoaderImplTest {
+@SpringBootTest
+@ExtendWith(SpringExtension.class)
+@ContextConfiguration(initializers = ConfigDataApplicationContextInitializer.class)
+@EnableConfigurationProperties(value = CsvDataFileLoaderImpl.class)
+@ActiveProfiles("test-csv-loader-positive")
+class CsvDataFileLoaderImplPositiveTest {
 
-    @Test
-    @DisplayName("Method load should raise NullPointerException if data file is not found")
-    void loadShouldRaiseIOExceptionIfDataFileIsNotFound() {
-        //arrange
-        var csvDataFileLoader = new CsvDataFileLoaderImpl("/data/not-existing-file.csv", '|');
-
-        //act & assert
-        assertThrows(NullPointerException.class, csvDataFileLoader::load);
-    }
+    @Autowired
+    private CsvDataFileLoaderImpl csvDataFileLoader;
 
     @Test
     @DisplayName("Method load should return expected data from the given file")
     void loadShouldReturnExpectedDataFromTheGivenFile() {
         //arrange
-        var csvDataFileLoader = new CsvDataFileLoaderImpl("/data/simple-tenses-test-items.csv", '|');
-
         List<String[]> expected = List.of(
                 new String[]{"Sharon ____________ to San Fransisco last month. ",
                         " moves           ", " move          ", " moved <<+>>"},

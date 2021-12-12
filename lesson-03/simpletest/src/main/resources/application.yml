@@ -1,6 +1,11 @@
+application:
+  locale: ru_RU
+
 spring:
-  web:
-    locale: en
+  messages:
+    encoding: UTF-8
+    fallback-to-system-locale: false
+
   jackson:
     property-naming-strategy: LOWER_CAMEL_CASE
     serialization:
@@ -8,7 +13,7 @@ spring:
 
 exam:
   header-loader:
-    file-name: /data/simple-tenses-test-header-${spring.web.locale}.json
+    file-name: /data/simple-tenses-test-header-${application.locale}.json
   csv-loader:
-    file-name: /data/simple-tenses-test-items-${spring.web.locale}.csv
+    file-name: /data/simple-tenses-test-items-${application.locale}.csv
     separator: '|'
