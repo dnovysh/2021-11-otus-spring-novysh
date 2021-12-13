@@ -18,3 +18,14 @@ exam:
     file-name: /data/not-existing-file.csv
     separator: '|'
 ---
+
+spring:
+  config:
+    activate:
+      on-profile: exam-integration-test
+exam:
+  header-loader:
+    file-name: /data/simple-tenses-test-header.json
+  csv-loader:
+    file-name: /data/simple-tenses-test-items.csv
+    separator: '|'
