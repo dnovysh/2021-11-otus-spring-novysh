@@ -11,3 +11,8 @@ spring:
       path: /h2-console
       settings:
         web-allow-others: true
+
+  jackson:
+    property-naming-strategy: LOWER_CAMEL_CASE
+    serialization:
+      indent-output: true

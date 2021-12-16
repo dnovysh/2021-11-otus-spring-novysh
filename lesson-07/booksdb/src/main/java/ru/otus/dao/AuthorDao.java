@@ -8,5 +8,7 @@ public interface AuthorDao {
 
     int count();
 
+    Author getById(int id);
+
     List<Author> getAll();
 }

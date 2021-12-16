@@ -5,7 +5,7 @@ INSERT INTO genre (id, name, parent_id) VALUES ('31', 'Fiction', null);
 INSERT INTO genre (id, name, parent_id) VALUES ('55', 'Reference', null);
 INSERT INTO genre (id, name, parent_id) VALUES ('57', 'Science', null);
 INSERT INTO genre (id, name, parent_id) VALUES ('57.20', 'Computer Science', '57');
-INSERT INTO genre (id, name, parent_id) VALUES ('57.20.3', 'Algorithms', '57.20');
+INSERT INTO genre (id, name, parent_id) VALUES ('57.20.03', 'Algorithms', '57.20');
 INSERT INTO genre (id, name, parent_id) VALUES ('57.20.16', 'Coding', '57.20');
 INSERT INTO genre (id, name, parent_id) VALUES ('57.20.53', 'Programming', '57.20');
 INSERT INTO genre (id, name, parent_id) VALUES ('57.20.54', 'Programming Languages', '57.20');
@@ -63,7 +63,7 @@ INSERT INTO book_author (book_id, author_id) values (1083,717);
 -- book_genre
 INSERT INTO book_genre (book_id, genre_id) VALUES(253, '08');
 INSERT INTO book_genre (book_id, genre_id) VALUES(253, '57.64');
-INSERT INTO book_genre (book_id, genre_id) VALUES(256, '57.20.3');
+INSERT INTO book_genre (book_id, genre_id) VALUES(256, '57.20.03');
 INSERT INTO book_genre (book_id, genre_id) VALUES(256, '57.20.53');
 INSERT INTO book_genre (book_id, genre_id) VALUES(529, '57.20.53');
 INSERT INTO book_genre (book_id, genre_id) VALUES(529, '57.20.61');
