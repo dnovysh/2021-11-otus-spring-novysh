@@ -5,50 +5,46 @@ import com.fasterxml.jackson.core.util.DefaultIndenter;
 import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
-import org.springframework.lang.NonNull;
-import org.springframework.stereotype.Component;
-import ru.otus.domain.Genre;
 
 import java.util.List;
 
-@Component
-public class GenreJsonSerializer implements GenreSerializer {
+public abstract class BaseJsonSerializer<T> implements BaseSerializer<T> {
 
     private final ObjectMapper mapper;
     private final DefaultPrettyPrinter prettyPrinter;
 
-    public GenreJsonSerializer(Jackson2ObjectMapperBuilder mapperBuilder) {
+    public BaseJsonSerializer(Jackson2ObjectMapperBuilder mapperBuilder) {
         this.mapper = mapperBuilder.build();
         prettyPrinter = new DefaultPrettyPrinter();
     }
 
     @Override
-    public String serialize(Genre genre) {
+    public String serialize(T t) {
         try {
-            return mapper.writeValueAsString(genre);
+            return mapper.writeValueAsString(t);
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e.getMessage(), e);
         }
     }
 
     @Override
-    public String serialize(List<Genre> genres) {
+    public String serialize(List<T> tList) {
         try {
-            return mapper.writeValueAsString(genres);
+            return mapper.writeValueAsString(tList);
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e.getMessage(), e);
         }
     }
 
     @Override
-    public String serialize(List<Genre> genres, @NonNull String indent) {
+    public String serialize(List<T> tList, String indent) {
         DefaultPrettyPrinter.Indenter indenter =
                 new DefaultIndenter(indent, DefaultIndenter.SYS_LF);
         prettyPrinter.indentObjectsWith(indenter);
         prettyPrinter.indentArraysWith(indenter);
 
         try {
-            return mapper.writer(prettyPrinter).writeValueAsString(genres);
+            return mapper.writer(prettyPrinter).writeValueAsString(tList);
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e.getMessage(), e);
         }
