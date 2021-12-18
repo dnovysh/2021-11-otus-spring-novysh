@@ -18,7 +18,7 @@ public class BookGenreDaoImpl implements BookGenreDao {
     }
 
     @Override
-    public List<Genre> getAllByBookId(int bookId) {
+    public List<Genre> getAllByBookIdWithoutChildren(int bookId) {
         Map<String, Object> params = Collections.singletonMap("book_id", bookId);
         return namedParameterJdbcOperations.query(
                 "select id, name, parent_id " +

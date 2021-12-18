@@ -4,9 +4,7 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
 import org.springframework.stereotype.Repository;
 import ru.otus.domain.Author;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Repository
 public class BookAuthorDaoImpl implements BookAuthorDao {
@@ -18,7 +16,7 @@ public class BookAuthorDaoImpl implements BookAuthorDao {
     }
 
     @Override
-    public List<Author> getAllByBookIdWithoutChildren(int bookId) {
+    public List<Author> getAllByBookId(int bookId) {
         Map<String, Object> params = Collections.singletonMap("book_id", bookId);
         return namedParameterJdbcOperations.query(
                 "select id, first_name, middle_name, last_name " +
@@ -31,6 +29,28 @@ public class BookAuthorDaoImpl implements BookAuthorDao {
                         rs.getString("middle_name"),
                         rs.getString("last_name")
                 )
+        );
+    }
+
+    @Override
+    public Map<Integer, List<Author>> getAll() {
+        return namedParameterJdbcOperations.query(
+                "select ba.book_id as book_id, id, first_name, middle_name, last_name " +
+                        "from book_author ba join author a on ba.author_id = a.id ",
+                (rs) -> {
+                    var result = new HashMap<Integer, List<Author>>();
+                    while (rs.next()) {
+                        int bookId = rs.getInt("book_id");
+                        var author = new Author(
+                                rs.getInt("id"),
+                                rs.getString("first_name"),
+                                rs.getString("middle_name"),
+                                rs.getString("last_name"));
+                        List<Author> authors = result.computeIfAbsent(bookId, k -> new ArrayList<>());
+                        authors.add(author);
+                    }
+                    return result;
+                }
         );
     }
 }
