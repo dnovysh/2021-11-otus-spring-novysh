@@ -4,8 +4,12 @@ import org.h2.tools.Console;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ApplicationContext;
+import org.springframework.core.ResolvableType;
 import ru.otus.dao.GenreDao;
-import ru.otus.service.GenreSerializer;
+import ru.otus.domain.Genre;
+import ru.otus.service.BaseJsonSerializer;
+import ru.otus.service.BaseSerializer;
+import ru.otus.service.GenreJsonSerializer;
 
 @SpringBootApplication
 public class BooksdbApplication {
@@ -14,7 +18,7 @@ public class BooksdbApplication {
         ApplicationContext context = SpringApplication.run(BooksdbApplication.class, args);
 
         GenreDao genreDao = context.getBean(GenreDao.class);
-        GenreSerializer genreSerializer = context.getBean(GenreSerializer.class);
+        BaseSerializer<Genre> genreSerializer = context.getBean(GenreJsonSerializer.class);
 
         System.out.println(genreDao.count());
 

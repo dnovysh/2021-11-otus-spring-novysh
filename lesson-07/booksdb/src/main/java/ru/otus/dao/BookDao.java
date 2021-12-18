@@ -8,11 +8,13 @@ public interface BookDao {
 
     int count();
 
-    void insert(Book person);
+    int insert(Book book);
 
-    Book getById(long id);
+    Book getById(int id);
 
     List<Book> getAll();
 
-    void deleteById(long id);
+    void updateById(int id);
+
+    void deleteById(int id);
 }
