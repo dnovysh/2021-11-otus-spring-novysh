@@ -53,4 +53,29 @@ public class BookAuthorDaoImpl implements BookAuthorDao {
                 }
         );
     }
+
+    @Override
+    public void insert(BookAuthor bookAuthor) {
+        namedParameterJdbcOperations.update(
+                "insert into book_author (book_id, author_id) values (:book_id, :author_id)",
+                Map.of("book_id", bookAuthor.bookId(), "author_id", bookAuthor.authorId()));
+    }
+
+    @Override
+    public boolean delete(BookAuthor bookAuthor) {
+        int status = namedParameterJdbcOperations.update(
+                "delete from book_author where book_id = :book_id and author_id = :author_id",
+                Map.of("book_id", bookAuthor.bookId(), "author_id", bookAuthor.authorId())
+        );
+        return status > 0;
+    }
+
+    @Override
+    public boolean exists(BookAuthor bookAuthor) {
+        return Optional.ofNullable(namedParameterJdbcOperations.queryForObject(
+                "select count(*) from book_author where book_id = :book_id and author_id = :author_id",
+                Map.of("book_id", bookAuthor.bookId(), "author_id", bookAuthor.authorId()),
+                Integer.class)
+        ).orElse(0) == 1;
+    }
 }

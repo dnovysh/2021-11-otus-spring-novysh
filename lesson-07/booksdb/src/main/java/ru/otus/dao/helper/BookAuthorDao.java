@@ -10,4 +10,10 @@ public interface BookAuthorDao {
     List<Author> getAllByBookId(int bookId);
 
     Map<Integer, List<Author>> getAll();
+
+    void insert(BookAuthor bookAuthor);
+
+    boolean delete(BookAuthor bookAuthor);
+
+    boolean exists(BookAuthor bookAuthor);
 }

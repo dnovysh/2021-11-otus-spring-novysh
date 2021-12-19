@@ -4,9 +4,7 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
 import org.springframework.stereotype.Repository;
 import ru.otus.domain.Genre;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Repository
 public class BookGenreDaoImpl implements BookGenreDao {
@@ -32,5 +30,52 @@ public class BookGenreDaoImpl implements BookGenreDao {
                         null
                 )
         );
+    }
+
+    @Override
+    public Map<Integer, List<Genre>> getAllWithoutChildren() {
+        return namedParameterJdbcOperations.query(
+                "select bg.book_id as book_id, id, name, parent_id " +
+                        "from book_genre as bg join genre as g on bg.genre_id = g.id ",
+                (rs) -> {
+                    var result = new HashMap<Integer, List<Genre>>();
+                    while (rs.next()) {
+                        int bookId = rs.getInt("book_id");
+                        var genre = new Genre(
+                                rs.getString("id"),
+                                rs.getString("name"),
+                                rs.getString("parent_id"),
+                                null);
+                        List<Genre> genres = result.computeIfAbsent(bookId, k -> new ArrayList<>());
+                        genres.add(genre);
+                    }
+                    return result;
+                }
+        );
+    }
+
+    @Override
+    public void insert(BookGenre bookGenre) {
+        namedParameterJdbcOperations.update(
+                "insert into book_genre (book_id, genre_id) values (:book_id, :genre_id)",
+                Map.of("book_id", bookGenre.bookId(), "genre_id", bookGenre.genreId()));
+    }
+
+    @Override
+    public boolean delete(BookGenre bookGenre) {
+        int status = namedParameterJdbcOperations.update(
+                "delete from book_genre where book_id = :book_id and genre_id = :genre_id",
+                Map.of("book_id", bookGenre.bookId(), "genre_id", bookGenre.genreId())
+        );
+        return status > 0;
+    }
+
+    @Override
+    public boolean exists(BookGenre bookGenre) {
+        return Optional.ofNullable(namedParameterJdbcOperations.queryForObject(
+                "select count(*) from book_genre where book_id = :book_id and genre_id = :genre_id",
+                Map.of("book_id", bookGenre.bookId(), "genre_id", bookGenre.genreId()),
+                Integer.class)
+        ).orElse(0) == 1;
     }
 }

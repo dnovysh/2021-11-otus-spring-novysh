@@ -1,4 +1,4 @@
 package ru.otus.dao.helper;
 
-public record BookAuthor(int book_id, int author_id) {
+public record BookAuthor(int bookId, int authorId) {
 }
