@@ -14,5 +14,5 @@ public interface GenreDao {
 
     Genre getEntireHierarchyStartWithId(String id);
 
-    List<Genre> getEntireHierarchyStartWithIdRoot();
+    List<Genre> getEntireHierarchyStartWithRoot();
 }

@@ -16,9 +16,9 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 @JdbcTest
 @Import(AuthorDaoImpl.class)
 class AuthorDaoImplTest {
-
     private static final int EXPECTED_AUTHORS_COUNT = 8;
-    private static final Author EXISTING_AUTHOR = new Author(1042, "Scott", null, "Oaks");
+    private static final Author EXISTING_AUTHOR =
+            new Author(1042, "Scott", null, "Oaks");
     private static final int NON_EXISTENT_AUTHOR_ID = 100;
 
     @Autowired

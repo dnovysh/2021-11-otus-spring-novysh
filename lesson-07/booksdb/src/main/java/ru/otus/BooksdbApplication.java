@@ -30,7 +30,7 @@ public class BooksdbApplication {
 //
 //        System.out.println(genreSerializer.serialize(genreDao.getByIdWithoutPopulateChildrenList("57.20")));
 //
-//        System.out.println(genreSerializer.serialize(genreDao.getEntireHierarchyStartWithIdRoot(), "    "));
+//        System.out.println(genreSerializer.serialize(genreDao.getEntireHierarchyStartWithRoot(), "    "));
 //
 //        System.out.println("\n");
 //

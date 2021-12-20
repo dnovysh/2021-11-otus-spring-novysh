@@ -21,7 +21,7 @@ import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
 
-@DisplayName("The helper DAO for linking books and authors")
+@DisplayName("Helper DAO for linking books and authors")
 @JdbcTest
 @Import(BookAuthorDaoImpl.class)
 class BookAuthorDaoImplTest {

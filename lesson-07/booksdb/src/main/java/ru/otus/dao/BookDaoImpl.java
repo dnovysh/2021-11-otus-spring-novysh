@@ -6,7 +6,9 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Repository;
+import ru.otus.dao.dto.BookInsertDto;
 import ru.otus.dao.helper.*;
 import ru.otus.domain.Author;
 import ru.otus.domain.Book;
@@ -39,14 +41,14 @@ public class BookDaoImpl implements BookDao {
     }
 
     @Override
-    public int insert(Book book) {
+    public int insert(@NonNull BookInsertDto bookInsertDto) {
         KeyHolder keyHolder = new GeneratedKeyHolder();
         SqlParameterSource params = new MapSqlParameterSource(Map.of(
-                "title", book.title(),
-                "total_pages", book.totalPages(),
-                "rating", book.rating(),
-                "isbn", book.isbn(),
-                "published_date", book.publishedDate()));
+                "title", bookInsertDto.title(),
+                "total_pages", bookInsertDto.totalPages(),
+                "rating", bookInsertDto.rating(),
+                "isbn", bookInsertDto.isbn(),
+                "published_date", bookInsertDto.publishedDate()));
         namedParameterJdbcOperations.update(
                 "insert into book (title, total_pages, rating, isbn, published_date)" +
                         " values (:title, :total_pages, :rating, :isbn, :published_date)",

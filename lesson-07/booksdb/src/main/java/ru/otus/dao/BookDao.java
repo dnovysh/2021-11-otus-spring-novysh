@@ -1,5 +1,6 @@
 package ru.otus.dao;
 
+import ru.otus.dao.dto.BookInsertDto;
 import ru.otus.domain.Book;
 
 import java.util.List;
@@ -8,7 +9,7 @@ public interface BookDao {
 
     int count();
 
-    int insert(Book book);
+    int insert(BookInsertDto bookInsertDto);
 
     Book getById(int id);
 

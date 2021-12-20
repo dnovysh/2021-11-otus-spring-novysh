@@ -58,7 +58,7 @@ public class GenreCommands {
             key = {"g-h-all", "getGenreHierarchy"})
     public void getGenreHierarchy(
             @ShellOption(defaultValue = BaseSerializer.DEFAULT_INDENT) String indent) {
-        List<Genre> genres = genreDao.getEntireHierarchyStartWithIdRoot();
+        List<Genre> genres = genreDao.getEntireHierarchyStartWithRoot();
         System.out.println(genreListSerializer.serialize(genres, indent));
     }
 }

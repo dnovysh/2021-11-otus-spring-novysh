@@ -1,6 +1,7 @@
 package ru.otus.dao;
 
 import lombok.val;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcOperations;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
@@ -34,10 +35,14 @@ public class GenreDaoImpl implements GenreDao {
     @Override
     public Genre getByIdWithoutPopulateChildrenList(String id) {
         Map<String, Object> params = Collections.singletonMap("id", id);
-        return namedParameterJdbcOperations.queryForObject(
-                "select id, name, parent_id from genre where id = :id",
-                params, new GenreMapper()
-        );
+        try {
+            return namedParameterJdbcOperations.queryForObject(
+                    "select id, name, parent_id from genre where id = :id",
+                    params, new GenreMapper()
+            );
+        } catch (EmptyResultDataAccessException e) {
+            return null;
+        }
     }
 
     @Override
@@ -56,29 +61,19 @@ public class GenreDaoImpl implements GenreDao {
         List<Genre> genres = mapHierarchyFromSqlRowSet(rs, id);
 
         if (genres.size() != 1 || !genres.get(0).id().equals(id)) {
-            throw new RuntimeException(String.format("Genre with id = %s not found", id));
+            return null;
         }
 
         return genres.get(0);
     }
 
     @Override
-    public List<Genre> getEntireHierarchyStartWithIdRoot() {
+    public List<Genre> getEntireHierarchyStartWithRoot() {
         SqlRowSet rs = jdbc.queryForRowSet(
                 "select id, name, parent_id from genre order by parent_id desc nulls last , id"
         );
 
         return mapHierarchyFromSqlRowSet(rs, null);
-    }
-
-    private static class GenreMapper implements RowMapper<Genre> {
-        @Override
-        public Genre mapRow(ResultSet rs, int rowNum) throws SQLException {
-            var id = rs.getString("id");
-            var name = rs.getString("name");
-            var parentId = rs.getString("parent_id");
-            return new Genre(id, name, parentId, null);
-        }
     }
 
     private List<Genre> mapHierarchyFromSqlRowSet(SqlRowSet rs, String rootId) {
@@ -92,7 +87,7 @@ public class GenreDaoImpl implements GenreDao {
             List<Genre> children = childrenById.get(id);
             var genre = new Genre(id, name, parentId, children);
             assert id != null;
-            if (id.equals(rootId) || parentId == null){
+            if (id.equals(rootId) || parentId == null) {
                 root.add(genre);
                 continue;
             }
@@ -101,5 +96,15 @@ public class GenreDaoImpl implements GenreDao {
         }
 
         return root;
+    }
+
+    private static class GenreMapper implements RowMapper<Genre> {
+        @Override
+        public Genre mapRow(ResultSet rs, int rowNum) throws SQLException {
+            var id = rs.getString("id");
+            var name = rs.getString("name");
+            var parentId = rs.getString("parent_id");
+            return new Genre(id, name, parentId, null);
+        }
     }
 }
