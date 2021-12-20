@@ -26,6 +26,7 @@ INSERT INTO author (id, first_name, middle_name, last_name) VALUES (333,'Svetlan
 INSERT INTO author (id, first_name, middle_name, last_name) VALUES (983,'Keith',null,'Frankish');
 INSERT INTO author (id, first_name, middle_name, last_name) VALUES (987,'William','M.','Ramsey');
 INSERT INTO author (id, first_name, middle_name, last_name) VALUES (1042,'Scott',null,'Oaks');
+INSERT INTO author (id, first_name, middle_name, last_name) VALUES (1071,'Shoko',null,'Azuma');
 
 -- book_author
 INSERT INTO book_author (book_id, author_id) values (253,163);
@@ -39,7 +40,7 @@ INSERT INTO book_author (book_id, author_id) values (757,1042);
 -- book_genre
 INSERT INTO book_genre (book_id, genre_id) VALUES(253, '08');
 INSERT INTO book_genre (book_id, genre_id) VALUES(253, '57.64');
-INSERT INTO book_genre (book_id, genre_id) VALUES(529, '57.20.53');
+INSERT INTO book_genre (book_id, genre_id) VALUES(529, '57.20.54');
 INSERT INTO book_genre (book_id, genre_id) VALUES(529, '57.20.61');
 INSERT INTO book_genre (book_id, genre_id) VALUES(529, '57.20.63');
 INSERT INTO book_genre (book_id, genre_id) VALUES(529, '57.64');
