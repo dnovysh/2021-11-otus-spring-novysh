@@ -28,9 +28,9 @@ public class BooksdbApplication {
 //
 //        System.out.println(genreDao.count());
 //
-//        System.out.println(genreSerializer.serialize(genreDao.getByIdWithoutChildren("57.20")));
+//        System.out.println(genreSerializer.serialize(genreDao.getByIdWithoutPopulateChildrenList("57.20")));
 //
-//        System.out.println(genreSerializer.serialize(genreDao.getEntireHierarchyStartWithRoot(), "    "));
+//        System.out.println(genreSerializer.serialize(genreDao.getEntireHierarchyStartWithIdRoot(), "    "));
 //
 //        System.out.println("\n");
 //
@@ -39,6 +39,6 @@ public class BooksdbApplication {
 //
 //        System.out.println(bookSerializer.serialize(bookDao.getAll(), "    "));
 
-        Console.main(args);
+//        Console.main(args);
     }
 }

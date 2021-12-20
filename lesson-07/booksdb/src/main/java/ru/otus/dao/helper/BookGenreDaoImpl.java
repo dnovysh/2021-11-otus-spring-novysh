@@ -16,7 +16,7 @@ public class BookGenreDaoImpl implements BookGenreDao {
     }
 
     @Override
-    public List<Genre> getAllByBookIdWithoutChildren(int bookId) {
+    public List<Genre> getAllByBookIdWithoutPopulateChildrenList(int bookId) {
         Map<String, Object> params = Collections.singletonMap("book_id", bookId);
         return namedParameterJdbcOperations.query(
                 "select id, name, parent_id " +
@@ -33,7 +33,7 @@ public class BookGenreDaoImpl implements BookGenreDao {
     }
 
     @Override
-    public Map<Integer, List<Genre>> getAllWithoutChildren() {
+    public Map<Integer, List<Genre>> getAllWithoutPopulateChildrenList() {
         return namedParameterJdbcOperations.query(
                 "select bg.book_id as book_id, id, name, parent_id " +
                         "from book_genre as bg join genre as g on bg.genre_id = g.id ",

@@ -9,7 +9,6 @@ spring:
     init:
       mode: embedded
       data-locations: test-data.sql
-      schema-locations: test-schema.sql
 
   jackson:
     property-naming-strategy: LOWER_CAMEL_CASE

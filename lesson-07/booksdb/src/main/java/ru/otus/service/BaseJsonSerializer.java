@@ -6,8 +6,6 @@ import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 
-import java.util.List;
-
 public abstract class BaseJsonSerializer<T> implements BaseSerializer<T> {
 
     private final ObjectMapper mapper;
@@ -28,23 +26,18 @@ public abstract class BaseJsonSerializer<T> implements BaseSerializer<T> {
     }
 
     @Override
-    public String serialize(List<T> tList) {
-        try {
-            return mapper.writeValueAsString(tList);
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e.getMessage(), e);
+    public String serialize(T t, String indent) {
+        if (indent.equals(DEFAULT_INDENT)) {
+            return serialize(t);
         }
-    }
 
-    @Override
-    public String serialize(List<T> tList, String indent) {
         DefaultPrettyPrinter.Indenter indenter =
                 new DefaultIndenter(indent, DefaultIndenter.SYS_LF);
         prettyPrinter.indentObjectsWith(indenter);
         prettyPrinter.indentArraysWith(indenter);
 
         try {
-            return mapper.writer(prettyPrinter).writeValueAsString(tList);
+            return mapper.writer(prettyPrinter).writeValueAsString(t);
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e.getMessage(), e);
         }

@@ -7,9 +7,9 @@ import java.util.Map;
 
 public interface BookGenreDao {
 
-    List<Genre> getAllByBookIdWithoutChildren(int bookId);
+    List<Genre> getAllByBookIdWithoutPopulateChildrenList(int bookId);
 
-    Map<Integer, List<Genre>> getAllWithoutChildren();
+    Map<Integer, List<Genre>> getAllWithoutPopulateChildrenList();
 
     void insert(BookGenre bookGenre);
 

@@ -8,11 +8,11 @@ public interface GenreDao {
 
     int count();
 
-    Genre getByIdWithoutChildren(String id);
+    Genre getByIdWithoutPopulateChildrenList(String id);
 
-    List<Genre> getAllWithoutChildren();
+    List<Genre> getAllWithoutPopulateChildrenList();
 
-    Genre getEntireHierarchyStartWith(String id);
+    Genre getEntireHierarchyStartWithId(String id);
 
-    List<Genre> getEntireHierarchyStartWithRoot();
+    List<Genre> getEntireHierarchyStartWithIdRoot();
 }

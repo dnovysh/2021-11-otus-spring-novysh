@@ -32,7 +32,7 @@ public class GenreDaoImpl implements GenreDao {
     }
 
     @Override
-    public Genre getByIdWithoutChildren(String id) {
+    public Genre getByIdWithoutPopulateChildrenList(String id) {
         Map<String, Object> params = Collections.singletonMap("id", id);
         return namedParameterJdbcOperations.queryForObject(
                 "select id, name, parent_id from genre where id = :id",
@@ -41,12 +41,12 @@ public class GenreDaoImpl implements GenreDao {
     }
 
     @Override
-    public List<Genre> getAllWithoutChildren() {
+    public List<Genre> getAllWithoutPopulateChildrenList() {
         return jdbc.query("select id, name, parent_id from genre", new GenreMapper());
     }
 
     @Override
-    public Genre getEntireHierarchyStartWith(@NonNull String id) {
+    public Genre getEntireHierarchyStartWithId(@NonNull String id) {
         Map<String, Object> params = Collections.singletonMap("id", id + "%");
         SqlRowSet rs = namedParameterJdbcOperations.queryForRowSet(
                 "select id, name, parent_id from genre where id like :id order by parent_id desc nulls last , id",
@@ -63,7 +63,7 @@ public class GenreDaoImpl implements GenreDao {
     }
 
     @Override
-    public List<Genre> getEntireHierarchyStartWithRoot() {
+    public List<Genre> getEntireHierarchyStartWithIdRoot() {
         SqlRowSet rs = jdbc.queryForRowSet(
                 "select id, name, parent_id from genre order by parent_id desc nulls last , id"
         );

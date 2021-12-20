@@ -72,7 +72,7 @@ public class BookDaoImpl implements BookDao {
                             rs.getString("isbn"),
                             rs.getDate("published_date"),
                             bookAuthorDao.getAllByBookId(bookId),
-                            bookGenreDao.getAllByBookIdWithoutChildren(bookId));
+                            bookGenreDao.getAllByBookIdWithoutPopulateChildrenList(bookId));
                 }
         );
     }
@@ -80,7 +80,7 @@ public class BookDaoImpl implements BookDao {
     @Override
     public List<Book> getAll() {
         Map<Integer, List<Author>> allActualAuthors = bookAuthorDao.getAll();
-        Map<Integer, List<Genre>> allActualGenres = bookGenreDao.getAllWithoutChildren();
+        Map<Integer, List<Genre>> allActualGenres = bookGenreDao.getAllWithoutPopulateChildrenList();
         List<PlainBook> plainBooks = namedParameterJdbcOperations.query(
                 "select id, title, total_pages, rating, isbn, published_date from book",
                 (rs, rowNum) -> {
