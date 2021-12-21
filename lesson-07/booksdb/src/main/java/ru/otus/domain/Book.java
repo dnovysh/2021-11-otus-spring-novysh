@@ -15,6 +15,7 @@ public record Book(
         BigDecimal rating,
         @JsonInclude(JsonInclude.Include.NON_NULL)
         String isbn,
+        @JsonInclude(JsonInclude.Include.NON_NULL)
         Date publishedDate,
         List<Author> authors,
         List<Genre> genres

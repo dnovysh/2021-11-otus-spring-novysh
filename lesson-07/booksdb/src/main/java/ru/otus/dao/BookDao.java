@@ -1,6 +1,7 @@
 package ru.otus.dao;
 
 import ru.otus.dao.dto.BookInsertDto;
+import ru.otus.dao.dto.BookUpdateDto;
 import ru.otus.domain.Book;
 
 import java.util.List;
@@ -15,11 +16,11 @@ public interface BookDao {
 
     List<Book> getAll();
 
-    boolean update(Book book);
+    boolean update(BookUpdateDto bookUpdateDto);
 
     boolean deleteById(int id);
 
-    void attachAuthorToBookById(int bookId, int authorId);
+    boolean attachAuthorToBookById(int bookId, int authorId);
 
     boolean detachAuthorFromBookById(int bookId, int authorId);
 

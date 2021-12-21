@@ -11,7 +11,7 @@ public interface BookAuthorDao {
 
     Map<Integer, List<Author>> getAll();
 
-    void insert(BookAuthor bookAuthor);
+    boolean insert(BookAuthor bookAuthor);
 
     boolean delete(BookAuthor bookAuthor);
 

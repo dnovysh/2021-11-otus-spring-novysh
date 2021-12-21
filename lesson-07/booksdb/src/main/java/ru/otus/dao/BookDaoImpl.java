@@ -10,6 +10,7 @@ import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Repository;
 import ru.otus.dao.dto.BookInsertDto;
+import ru.otus.dao.dto.BookUpdateDto;
 import ru.otus.dao.helper.*;
 import ru.otus.domain.Author;
 import ru.otus.domain.Book;
@@ -51,14 +52,6 @@ public class BookDaoImpl implements BookDao {
                 .addValue("isbn", bookInsertDto.isbn())
                 .addValue("published_date", bookInsertDto.publishedDate());
 
-//                new MapSqlParameterSource(Map.of(
-//                "title", bookInsertDto.title(),
-//                "total_pages", bookInsertDto.totalPages(),
-//                "rating", bookInsertDto.rating(),
-//                "isbn", bookInsertDto.isbn(),
-//                "published_date", bookInsertDto.publishedDate()));
-
-
         namedParameterJdbcOperations.update(
                 "insert into book (title, total_pages, rating, isbn, published_date)" +
                         " values (:title, :total_pages, :rating, :isbn, :published_date)",
@@ -80,7 +73,7 @@ public class BookDaoImpl implements BookDao {
                         return new Book(
                                 bookId,
                                 rs.getString("title"),
-                                rs.getInt("total_pages"),
+                                rs.getObject("total_pages", Integer.class),
                                 rs.getBigDecimal("rating"),
                                 rs.getString("isbn"),
                                 rs.getDate("published_date"),
@@ -122,18 +115,19 @@ public class BookDaoImpl implements BookDao {
     }
 
     @Override
-    public boolean update(Book book) {
+    public boolean update(BookUpdateDto bookUpdateDto) {
         int status = namedParameterJdbcOperations.update(
                 "update book set title = :title, total_pages = :total_pages," +
                         " rating = :rating, isbn = :isbn, published_date = :published_date" +
                         " where id = :id",
-                new MapSqlParameterSource(Map.of(
-                        "id", book.id(),
-                        "title", book.title(),
-                        "total_pages", book.totalPages(),
-                        "rating", book.rating(),
-                        "isbn", book.isbn(),
-                        "published_date", book.publishedDate()))
+                new MapSqlParameterSource()
+                        .addValue("id", bookUpdateDto.id())
+                        .addValue("title", bookUpdateDto.title())
+                        .addValue("total_pages", bookUpdateDto.totalPages())
+                        .addValue("rating", bookUpdateDto.rating())
+                        .addValue("rating", bookUpdateDto.rating())
+                        .addValue("isbn", bookUpdateDto.isbn())
+                        .addValue("published_date", bookUpdateDto.publishedDate())
         );
         return status > 0;
     }
@@ -148,8 +142,8 @@ public class BookDaoImpl implements BookDao {
     }
 
     @Override
-    public void attachAuthorToBookById(int bookId, int authorId) {
-        bookAuthorDao.insert(new BookAuthor(bookId, authorId));
+    public boolean attachAuthorToBookById(int bookId, int authorId) {
+        return bookAuthorDao.insert(new BookAuthor(bookId, authorId));
     }
 
     @Override
