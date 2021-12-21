@@ -55,22 +55,27 @@ public class BookCommands {
 
     @ShellMethod(value = "add book command", key = {"b-add", "addBook"})
     public void addBook(
-            @Size(min = 1, max = 255) String title,
-            @ShellOption(defaultValue = ShellOption.NULL) int totalPages,
+            @Size(min = 1, max = 255)
+                    String title,
+            @ShellOption(defaultValue = ShellOption.NULL)
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+                    String publishedDate,
+            @ShellOption(defaultValue = ShellOption.NULL)
+                    Integer totalPages,
             @ShellOption(defaultValue = ShellOption.NULL)
             @DecimalMin(value = "0.0", inclusive = false)
             @DecimalMax(value = "5.0")
                     BigDecimal rating,
             @ShellOption(defaultValue = ShellOption.NULL)
             @ISBN
-                    String isbn,
-            @ShellOption(defaultValue = ShellOption.NULL)
-            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) String publishedDate) {
+                    String isbn) {
         int insertedBookId = bookDao.insert(new BookInsertDto(
                 title, totalPages, rating, isbn, null /*Date.valueOf(publishedDate)*/
         ));
         Book insertedBook = bookDao.getById(insertedBookId);
         System.out.println(bookSerializer.serialize(insertedBook));
     }
+
+
 
 }

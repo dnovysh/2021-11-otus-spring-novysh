@@ -1,5 +1,6 @@
 package ru.otus.dao;
 
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcOperations;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
@@ -43,12 +44,21 @@ public class BookDaoImpl implements BookDao {
     @Override
     public int insert(@NonNull BookInsertDto bookInsertDto) {
         KeyHolder keyHolder = new GeneratedKeyHolder();
-        SqlParameterSource params = new MapSqlParameterSource(Map.of(
-                "title", bookInsertDto.title(),
-                "total_pages", bookInsertDto.totalPages(),
-                "rating", bookInsertDto.rating(),
-                "isbn", bookInsertDto.isbn(),
-                "published_date", bookInsertDto.publishedDate()));
+        SqlParameterSource params = new MapSqlParameterSource()
+                .addValue("title", bookInsertDto.title())
+                .addValue("total_pages", bookInsertDto.totalPages())
+                .addValue("rating", bookInsertDto.rating())
+                .addValue("isbn", bookInsertDto.isbn())
+                .addValue("published_date", bookInsertDto.publishedDate());
+
+//                new MapSqlParameterSource(Map.of(
+//                "title", bookInsertDto.title(),
+//                "total_pages", bookInsertDto.totalPages(),
+//                "rating", bookInsertDto.rating(),
+//                "isbn", bookInsertDto.isbn(),
+//                "published_date", bookInsertDto.publishedDate()));
+
+
         namedParameterJdbcOperations.update(
                 "insert into book (title, total_pages, rating, isbn, published_date)" +
                         " values (:title, :total_pages, :rating, :isbn, :published_date)",
@@ -61,22 +71,26 @@ public class BookDaoImpl implements BookDao {
     @Override
     public Book getById(int id) {
         Map<String, Object> params = Collections.singletonMap("id", id);
-        return namedParameterJdbcOperations.queryForObject(
-                "select id, title, total_pages, rating, isbn, published_date from book where id = :id",
-                params,
-                (rs, rowNum) -> {
-                    int bookId = rs.getInt("id");
-                    return new Book(
-                            bookId,
-                            rs.getString("title"),
-                            rs.getInt("total_pages"),
-                            rs.getBigDecimal("rating"),
-                            rs.getString("isbn"),
-                            rs.getDate("published_date"),
-                            bookAuthorDao.getAllByBookId(bookId),
-                            bookGenreDao.getAllByBookIdWithoutPopulateChildrenList(bookId));
-                }
-        );
+        try {
+            return namedParameterJdbcOperations.queryForObject(
+                    "select id, title, total_pages, rating, isbn, published_date from book where id = :id",
+                    params,
+                    (rs, rowNum) -> {
+                        int bookId = rs.getInt("id");
+                        return new Book(
+                                bookId,
+                                rs.getString("title"),
+                                rs.getInt("total_pages"),
+                                rs.getBigDecimal("rating"),
+                                rs.getString("isbn"),
+                                rs.getDate("published_date"),
+                                bookAuthorDao.getAllByBookId(bookId),
+                                bookGenreDao.getAllByBookIdWithoutPopulateChildrenList(bookId));
+                    }
+            );
+        } catch (EmptyResultDataAccessException e) {
+            return null;
+        }
     }
 
     @Override

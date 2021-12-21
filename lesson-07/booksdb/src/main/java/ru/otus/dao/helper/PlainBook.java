@@ -6,7 +6,7 @@ import java.sql.Date;
 public record PlainBook(
         int id,
         String title,
-        int totalPages,
+        Integer totalPages,
         BigDecimal rating,
         String isbn,
         Date publishedDate

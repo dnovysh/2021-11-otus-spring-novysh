@@ -9,7 +9,8 @@ import java.util.List;
 public record Book(
         int id,
         String title,
-        int totalPages,
+        @JsonInclude(JsonInclude.Include.NON_NULL)
+        Integer totalPages,
         @JsonInclude(JsonInclude.Include.NON_NULL)
         BigDecimal rating,
         @JsonInclude(JsonInclude.Include.NON_NULL)

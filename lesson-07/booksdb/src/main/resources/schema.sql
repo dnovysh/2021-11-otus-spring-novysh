@@ -22,7 +22,7 @@ CREATE TABLE book
     total_pages    INT                                                    NULL,
     rating         DECIMAL(4, 2)                                          NULL,
     isbn           VARCHAR(13)                                            NULL,
-    published_date DATE,
+    published_date DATE                                                   NULL,
     PRIMARY KEY (id)
 );
 

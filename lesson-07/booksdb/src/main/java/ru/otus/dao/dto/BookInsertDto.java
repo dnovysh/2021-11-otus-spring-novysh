@@ -7,7 +7,7 @@ import java.sql.Date;
 
 public record BookInsertDto(
         String title,
-        int totalPages,
+        Integer totalPages,
         @JsonInclude(JsonInclude.Include.NON_NULL)
         BigDecimal rating,
         @JsonInclude(JsonInclude.Include.NON_NULL)
