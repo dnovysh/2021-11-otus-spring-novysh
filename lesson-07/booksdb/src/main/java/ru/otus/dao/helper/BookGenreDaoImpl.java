@@ -55,10 +55,11 @@ public class BookGenreDaoImpl implements BookGenreDao {
     }
 
     @Override
-    public void insert(BookGenre bookGenre) {
-        namedParameterJdbcOperations.update(
+    public boolean insert(BookGenre bookGenre) {
+        int status = namedParameterJdbcOperations.update(
                 "insert into book_genre (book_id, genre_id) values (:book_id, :genre_id)",
                 Map.of("book_id", bookGenre.bookId(), "genre_id", bookGenre.genreId()));
+        return status > 0;
     }
 
     @Override

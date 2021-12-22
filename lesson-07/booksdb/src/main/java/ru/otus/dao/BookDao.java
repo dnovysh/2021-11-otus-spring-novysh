@@ -24,7 +24,7 @@ public interface BookDao {
 
     boolean detachAuthorFromBookById(int bookId, int authorId);
 
-    void attachGenreToBookById(int bookId, String genreId);
+    boolean attachGenreToBookById(int bookId, String genreId);
 
     boolean detachGenreFromBookById(int bookId, String genreId);
 }

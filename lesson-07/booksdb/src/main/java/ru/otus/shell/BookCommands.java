@@ -150,5 +150,30 @@ public class BookCommands {
         }
     }
 
+    @ShellMethod(value = "assign an genre to a book by their identifiers command",
+            key = {"b-assign-genre", "assignGenre"})
+    public void assignGenre(
+            @ShellOption(value = "--bookId") int bookId,
+            @ShellOption(value = "--genreId") String genreId) {
+        boolean isOk = bookDao.attachGenreToBookById(bookId, genreId);
+        if (isOk) {
+            System.out.println("Genre successfully assigned");
+        } else {
+            System.out.println("There is no book or genre with the given ID");
+        }
+    }
 
+    @ShellMethod(value = "exclude an genre from a book command",
+            key = {"b-exclude-genre", "excludeGenre"})
+    public void excludeGenre(
+            @ShellOption(value = "--bookId") int bookId,
+            @ShellOption(value = "--genreId") String genreId) {
+        boolean isOk = bookDao.detachGenreFromBookById(bookId, genreId);
+        if (isOk) {
+            System.out.println("Genre successfully excluded");
+        } else {
+            System.out.println(
+                    "There is no book, no genre, nor their relationship with the given IDs");
+        }
+    }
 }

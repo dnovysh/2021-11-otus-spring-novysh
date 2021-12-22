@@ -11,7 +11,7 @@ public interface BookGenreDao {
 
     Map<Integer, List<Genre>> getAllWithoutPopulateChildrenList();
 
-    void insert(BookGenre bookGenre);
+    boolean insert(BookGenre bookGenre);
 
     boolean delete(BookGenre bookGenre);
 

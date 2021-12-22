@@ -152,8 +152,8 @@ public class BookDaoImpl implements BookDao {
     }
 
     @Override
-    public void attachGenreToBookById(int bookId, String genreId) {
-        bookGenreDao.insert(new BookGenre(bookId, genreId));
+    public boolean attachGenreToBookById(int bookId, String genreId) {
+        return bookGenreDao.insert(new BookGenre(bookId, genreId));
     }
 
     @Override
