@@ -23,6 +23,5 @@ public class SimpletestApplication {
         ExaminationService consoleExaminationService = context.getBean(ExaminationService.class);
 
         consoleExaminationService.conductTest();
-
     }
 }

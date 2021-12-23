@@ -3,12 +3,11 @@ package ru.otus.loader;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.ConstructorBinding;
 
-import java.io.BufferedReader;
+import java.io.BufferedInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 @ConstructorBinding
 @ConfigurationProperties(prefix = "exam.header-loader")
@@ -22,11 +21,15 @@ public class ResourceFileAsStringLoaderImpl implements ResourceFileAsStringLoade
 
     @Override
     public String load() {
-        try (var br = new BufferedReader(new InputStreamReader(
-                Objects.requireNonNull(getClass().getResourceAsStream(fileName)), StandardCharsets.UTF_8))) {
+        try (var bis = new BufferedInputStream(
+                Objects.requireNonNull(getClass().getResourceAsStream(fileName)))) {
+            ByteArrayOutputStream buf = new ByteArrayOutputStream();
 
-            return br.lines().collect(Collectors.joining(System.lineSeparator()));
+            for (int result = bis.read(); result != -1; result = bis.read()) {
+                buf.write((byte) result);
+            }
 
+            return buf.toString(StandardCharsets.UTF_8);
         } catch (IOException e) {
             throw new RuntimeException(e.getMessage(), e);
         }
