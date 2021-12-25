@@ -11,11 +11,19 @@ public class Exam implements Iterable<ExamItem> {
 
     @Getter
     private final String examTitle;
-
+    @Getter
+    private final String minPercentageOfCorrectAnswersLabel;
+    @Getter
+    private final int minPercentageOfCorrectAnswers;
     private final List<ExamItem> examItems;
 
-    public Exam(String examTitle, List<ExamItem> examItems) {
+    public Exam(String examTitle,
+                String minPercentageOfCorrectAnswersLabel,
+                int minPercentageOfCorrectAnswers,
+                List<ExamItem> examItems) {
         this.examTitle = examTitle;
+        this.minPercentageOfCorrectAnswersLabel = minPercentageOfCorrectAnswersLabel;
+        this.minPercentageOfCorrectAnswers = minPercentageOfCorrectAnswers;
         this.examItems = new ArrayList<>(examItems);
     }
 
@@ -29,8 +37,11 @@ public class Exam implements Iterable<ExamItem> {
 
     @Override
     public String toString() {
-        return  examItems.stream().map(ExamItem::toString)
-                .collect(Collectors.joining("\n", examTitle + "\n\n", ""));
+        String titleBlock = String.format("%s\n\n%s : %s%%\n\n",
+                examTitle, minPercentageOfCorrectAnswersLabel, minPercentageOfCorrectAnswers);
+
+        return examItems.stream().map(ExamItem::toString)
+                .collect(Collectors.joining("\n", titleBlock , ""));
     }
 
     @Override
