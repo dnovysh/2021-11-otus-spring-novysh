@@ -1,9 +1,11 @@
 package ru.otus.core.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 import java.util.Objects;
@@ -28,11 +30,6 @@ public class Genre {
 
     @Column(name = "parent_id")
     protected String parentId;
-
-    @JsonIgnore
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "parent_id", referencedColumnName = "id")
-    private Genre parent;
 
     @Override
     public boolean equals(Object o) {

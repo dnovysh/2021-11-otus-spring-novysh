@@ -5,10 +5,10 @@ import org.springframework.shell.standard.ShellCommandGroup;
 import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
 import org.springframework.shell.standard.ShellOption;
-import ru.otus.dao.BookDao;
-import ru.otus.dao.dto.BookInsertDto;
+import ru.otus.core.abstraction.BookStorageUnitOfWork;
+import ru.otus.core.entity.Book;
 import ru.otus.dao.dto.BookUpdateDto;
-import ru.otus.domain.Book;
+
 import ru.otus.core.abstraction.BaseSerializer;
 
 import javax.validation.constraints.DecimalMax;
@@ -23,34 +23,37 @@ import java.util.Optional;
 @ShellComponent
 @ShellCommandGroup("Book Commands")
 public class BookCommands {
-    private final BookDao bookDao;
+    private final BookStorageUnitOfWork bookStorage;
     private final BaseSerializer<Book> bookSerializer;
     private final BaseSerializer<List<Book>> bookListSerializer;
 
-    public BookCommands(BookDao bookDao,
+    public BookCommands(BookStorageUnitOfWork bookStorage,
                         BaseSerializer<Book> bookSerializer,
                         BaseSerializer<List<Book>> bookListSerializer) {
-        this.bookDao = bookDao;
+        this.bookStorage = bookStorage;
         this.bookSerializer = bookSerializer;
         this.bookListSerializer = bookListSerializer;
     }
 
     @ShellMethod(value = "get book count command", key = {"b-count", "getBookCount"})
     public void getBookCount() {
-        System.out.println(bookDao.count());
+        System.out.println(bookStorage.count());
     }
 
     @ShellMethod(value = "get book by id command", key = {"b-id", "getBook"})
     public void getBookById(
             int id,
             @ShellOption(defaultValue = BaseSerializer.DEFAULT_INDENT) String indent) {
-        System.out.println(bookSerializer.serialize(bookDao.getById(id), indent));
+        System.out.println(bookStorage.findById(id)
+                .map(b -> bookSerializer.serialize(b, indent))
+                .orElse("Book not found")
+        );
     }
 
     @ShellMethod(value = "get all book command", key = {"b-all", "getAllBook"})
     public void getAllBook(
             @ShellOption(defaultValue = BaseSerializer.DEFAULT_INDENT) String indent) {
-        List<Book> books = bookDao.getAll();
+        List<Book> books = bookStorage.findAll();
         System.out.println(bookListSerializer.serialize(books, indent));
     }
 
@@ -72,11 +75,10 @@ public class BookCommands {
                     message = "Published date must be in ISO format: YYYY-MM-DD")
                     String publishedDate
     ) {
-        int insertedBookId = bookDao.insert(new BookInsertDto(
+        Book insertedBook = bookStorage.create(new Book(
                 title, totalPages, rating, isbn,
                 Optional.ofNullable(publishedDate).map(Date::valueOf).orElse(null)
         ));
-        Book insertedBook = bookDao.getById(insertedBookId);
         System.out.println("Book successfully added:");
         System.out.println(bookSerializer.serialize(insertedBook));
     }
@@ -100,27 +102,16 @@ public class BookCommands {
                     message = "Published date must be in ISO format: YYYY-MM-DD")
                     String publishedDate
     ) {
-        BookUpdateDto bookUpdateDto = new BookUpdateDto(
+        Book updatedBook = new Book(
                 id, title, totalPages, rating, isbn,
                 Optional.ofNullable(publishedDate).map(Date::valueOf).orElse(null));
-        boolean isOk = bookDao.update(bookUpdateDto);
-        if (isOk) {
-            System.out.println("Book successfully changed:");
-        } else {
-            System.out.println("Unable to change book information, current information:");
-        }
-        Book updatedBook = bookDao.getById(bookUpdateDto.id());
+        System.out.println("Updated book:");
         System.out.println(bookSerializer.serialize(updatedBook));
     }
 
     @ShellMethod(value = "remove book by id command", key = {"b-remove", "removeBook"})
     public void removeBookById(int id) {
-        boolean isOk = bookDao.deleteById(id);
-        if (isOk) {
-            System.out.println("Book successfully deleted");
-        } else {
-            System.out.println("There is no book with the given ID");
-        }
+        bookStorage.deleteById(id);
     }
 
     @ShellMethod(value = "assign an author to a book by their identifiers command",
@@ -128,9 +119,10 @@ public class BookCommands {
     public void assignAuthor(
             @ShellOption(value = "--bookId") int bookId,
             @ShellOption(value = "--authorId") int authorId) {
-        boolean isOk = bookDao.attachAuthorToBookById(bookId, authorId);
-        if (isOk) {
+        Optional<Book> optionalBook = bookStorage.addAuthorToBookById(bookId, authorId);
+        if (optionalBook.isPresent()) {
             System.out.println("Author successfully assigned");
+            System.out.println(optionalBook.map(bookSerializer::serialize));
         } else {
             System.out.println("There is no book or author with the given ID");
         }
@@ -141,7 +133,7 @@ public class BookCommands {
     public void excludeAuthor(
             @ShellOption(value = "--bookId") int bookId,
             @ShellOption(value = "--authorId") int authorId) {
-        boolean isOk = bookDao.detachAuthorFromBookById(bookId, authorId);
+        boolean isOk = bookStorage.detachAuthorFromBookById(bookId, authorId);
         if (isOk) {
             System.out.println("Author successfully excluded");
         } else {
@@ -155,7 +147,7 @@ public class BookCommands {
     public void assignGenre(
             @ShellOption(value = "--bookId") int bookId,
             @ShellOption(value = "--genreId") String genreId) {
-        boolean isOk = bookDao.attachGenreToBookById(bookId, genreId);
+        boolean isOk = bookStorage.attachGenreToBookById(bookId, genreId);
         if (isOk) {
             System.out.println("Genre successfully assigned");
         } else {
@@ -168,7 +160,7 @@ public class BookCommands {
     public void excludeGenre(
             @ShellOption(value = "--bookId") int bookId,
             @ShellOption(value = "--genreId") String genreId) {
-        boolean isOk = bookDao.detachGenreFromBookById(bookId, genreId);
+        boolean isOk = bookStorage.detachGenreFromBookById(bookId, genreId);
         if (isOk) {
             System.out.println("Genre successfully excluded");
         } else {

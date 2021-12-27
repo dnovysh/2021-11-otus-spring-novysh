@@ -1,7 +1,8 @@
 package ru.otus.repository;
 
 import ru.otus.core.entity.Genre;
-import ru.otus.core.entity.GenreClassifier;
+import ru.otus.core.entity.GenreClassifierView;
+import ru.otus.core.entity.GenreParentsView;
 
 import java.util.List;
 import java.util.Optional;
@@ -14,7 +15,9 @@ public interface GenreRepository {
 
     List<Genre> findAll();
 
-    Optional<GenreClassifier> getGenreClassifierStartWithId(String id);
+    Optional<GenreClassifierView> getGenreClassifierStartWithId(String id);
 
-    List<GenreClassifier> getGenreClassifier();
+    List<GenreClassifierView> getAllGenreClassifier();
+
+    Optional<GenreParentsView> getGenreParentsById(String id);
 }

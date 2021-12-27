@@ -1,7 +1,11 @@
 package ru.otus.core.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
+import org.hibernate.annotations.BatchSize;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 import org.hibernate.validator.constraints.ISBN;
 
 import javax.persistence.*;
@@ -52,6 +56,7 @@ public class Book {
     private Date publishedDate;
 
     @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
+    @Fetch(value = FetchMode.SUBSELECT)
     @JoinTable(name = "book_author",
             joinColumns = @JoinColumn(name = "book_id", referencedColumnName = "id",
                     foreignKey = @ForeignKey(name = "fk_book_author")),
@@ -59,7 +64,8 @@ public class Book {
                     foreignKey = @ForeignKey(name = "fk_author_book")))
     private List<Author> authors;
 
-    @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
+    @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.ALL})
+    @Fetch(value = FetchMode.SUBSELECT)
     @JoinTable(name = "book_genre",
             joinColumns = @JoinColumn(name = "book_id", referencedColumnName = "id",
                     foreignKey = @ForeignKey(name = "fk_book_genre")),
@@ -67,10 +73,31 @@ public class Book {
                     foreignKey = @ForeignKey(name = "fk_genre_book")))
     private List<Genre> genres;
 
+    @JsonIgnore
     @OneToMany(fetch = FetchType.LAZY, cascade = {CascadeType.REMOVE})
+    @BatchSize(size = 20)
     @JoinColumn(name = "book_id", referencedColumnName = "id",
             foreignKey = @ForeignKey(name = "fk_book_review"))
     private List<Review> reviews;
+
+    public Book(String title, Integer totalPages, BigDecimal rating,
+                String isbn, Date publishedDate) {
+        this.title = title;
+        this.totalPages = totalPages;
+        this.rating = rating;
+        this.isbn = isbn;
+        this.publishedDate = publishedDate;
+    }
+
+    public Book(Integer id, String title, Integer totalPages, BigDecimal rating,
+                String isbn, Date publishedDate) {
+        this.id = id;
+        this.title = title;
+        this.totalPages = totalPages;
+        this.rating = rating;
+        this.isbn = isbn;
+        this.publishedDate = publishedDate;
+    }
 
     @Override
     public boolean equals(Object o) {

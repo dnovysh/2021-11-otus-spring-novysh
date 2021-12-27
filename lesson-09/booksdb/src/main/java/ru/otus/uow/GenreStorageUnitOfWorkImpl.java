@@ -4,7 +4,8 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import ru.otus.core.abstraction.GenreStorageUnitOfWork;
 import ru.otus.core.entity.Genre;
-import ru.otus.core.entity.GenreClassifier;
+import ru.otus.core.entity.GenreClassifierView;
+import ru.otus.core.entity.GenreParentsView;
 import ru.otus.repository.GenreRepository;
 
 import java.util.List;
@@ -39,13 +40,30 @@ public class GenreStorageUnitOfWorkImpl implements GenreStorageUnitOfWork {
 
     @Transactional(readOnly = true)
     @Override
-    public Optional<GenreClassifier> getGenreClassifierStartWithId(String id) {
+    public Optional<GenreClassifierView> getGenreClassifierStartWithId(String id) {
         return genreRepository.getGenreClassifierStartWithId(id);
     }
 
     @Transactional(readOnly = true)
     @Override
-    public List<GenreClassifier> getGenreClassifier() {
-        return genreRepository.getGenreClassifier();
+    public List<GenreClassifierView> getAllGenreClassifier() {
+        return genreRepository.getAllGenreClassifier();
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public Optional<GenreParentsView> getGenrePathById(String id) {
+        var genreNode = genreRepository.getGenreParentsById(id);
+        if (genreNode.isEmpty()) {
+            return genreNode;
+        }
+        GenreParentsView genreParentsView = genreNode.get();
+        while (true) {
+            if (genreParentsView.getParent() == null) {
+                return Optional.of(genreParentsView);
+            }
+            genreParentsView.getParent().setChild(genreParentsView);
+            genreParentsView = genreParentsView.getParent();
+        }
     }
 }

@@ -2,7 +2,8 @@ package ru.otus.repository;
 
 import org.springframework.stereotype.Repository;
 import ru.otus.core.entity.Genre;
-import ru.otus.core.entity.GenreClassifier;
+import ru.otus.core.entity.GenreClassifierView;
+import ru.otus.core.entity.GenreParentsView;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -35,13 +36,19 @@ public class GenreEmRepository implements GenreRepository {
     }
 
     @Override
-    public Optional<GenreClassifier> getGenreClassifierStartWithId(String id) {
-        return Optional.ofNullable(em.find(GenreClassifier.class, id));
+    public Optional<GenreClassifierView> getGenreClassifierStartWithId(String id) {
+        return Optional.ofNullable(em.find(GenreClassifierView.class, id));
     }
 
     @Override
-    public List<GenreClassifier> getGenreClassifier() {
-        return em.createQuery("select g from Genre g where g.parentId is null",
-                GenreClassifier.class).getResultList();
+    public List<GenreClassifierView> getAllGenreClassifier() {
+        return em.createQuery(
+                "select g from GenreClassifierView g where g.parent is null order by g.id",
+                GenreClassifierView.class).getResultList();
+    }
+
+    @Override
+    public Optional<GenreParentsView> getGenreParentsById(String id) {
+        return Optional.ofNullable(em.find(GenreParentsView.class, id));
     }
 }
