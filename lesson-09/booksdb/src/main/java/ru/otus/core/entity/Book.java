@@ -17,6 +17,7 @@ import java.math.BigDecimal;
 import java.sql.Date;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -55,29 +56,30 @@ public class Book {
     @Column(name = "published_date")
     private Date publishedDate;
 
-    @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
+    @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST})
     @Fetch(value = FetchMode.SUBSELECT)
     @JoinTable(name = "book_author",
             joinColumns = @JoinColumn(name = "book_id", referencedColumnName = "id",
-                    foreignKey = @ForeignKey(name = "fk_book_author")),
+                    foreignKey = @ForeignKey(name = "fk_book_author"), updatable = false),
             inverseJoinColumns = @JoinColumn(name = "author_id", referencedColumnName = "id",
                     foreignKey = @ForeignKey(name = "fk_author_book")))
-    private List<Author> authors;
+    private Set<Author> authors;
 
-    @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.ALL})
+    @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST})
     @Fetch(value = FetchMode.SUBSELECT)
     @JoinTable(name = "book_genre",
             joinColumns = @JoinColumn(name = "book_id", referencedColumnName = "id",
-                    foreignKey = @ForeignKey(name = "fk_book_genre")),
+                    foreignKey = @ForeignKey(name = "fk_book_genre"), updatable = false),
             inverseJoinColumns = @JoinColumn(name = "genre_id", referencedColumnName = "id",
                     foreignKey = @ForeignKey(name = "fk_genre_book")))
-    private List<Genre> genres;
+    private Set<Genre> genres;
 
     @JsonIgnore
-    @OneToMany(fetch = FetchType.LAZY, cascade = {CascadeType.REMOVE})
+    @OneToMany(fetch = FetchType.LAZY)
     @BatchSize(size = 20)
     @JoinColumn(name = "book_id", referencedColumnName = "id",
-            foreignKey = @ForeignKey(name = "fk_book_review"))
+            foreignKey = @ForeignKey(name = "fk_book_review"),
+            updatable = false, insertable = false)
     private List<Review> reviews;
 
     public Book(String title, Integer totalPages, BigDecimal rating,

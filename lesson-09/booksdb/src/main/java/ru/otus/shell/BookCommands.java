@@ -5,11 +5,9 @@ import org.springframework.shell.standard.ShellCommandGroup;
 import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
 import org.springframework.shell.standard.ShellOption;
+import ru.otus.core.abstraction.BaseSerializer;
 import ru.otus.core.abstraction.BookStorageUnitOfWork;
 import ru.otus.core.entity.Book;
-import ru.otus.dao.dto.BookUpdateDto;
-
-import ru.otus.core.abstraction.BaseSerializer;
 
 import javax.validation.constraints.DecimalMax;
 import javax.validation.constraints.DecimalMin;
@@ -102,9 +100,9 @@ public class BookCommands {
                     message = "Published date must be in ISO format: YYYY-MM-DD")
                     String publishedDate
     ) {
-        Book updatedBook = new Book(
+        Book updatedBook = bookStorage.update(new Book(
                 id, title, totalPages, rating, isbn,
-                Optional.ofNullable(publishedDate).map(Date::valueOf).orElse(null));
+                Optional.ofNullable(publishedDate).map(Date::valueOf).orElse(null)));
         System.out.println("Updated book:");
         System.out.println(bookSerializer.serialize(updatedBook));
     }
@@ -133,9 +131,10 @@ public class BookCommands {
     public void excludeAuthor(
             @ShellOption(value = "--bookId") int bookId,
             @ShellOption(value = "--authorId") int authorId) {
-        boolean isOk = bookStorage.detachAuthorFromBookById(bookId, authorId);
-        if (isOk) {
+        Optional<Book> optionalBook = bookStorage.removeAuthorFromBookById(bookId, authorId);
+        if (optionalBook.isPresent()) {
             System.out.println("Author successfully excluded");
+            System.out.println(optionalBook.map(bookSerializer::serialize));
         } else {
             System.out.println(
                     "There is no book, no author, nor their relationship with the given IDs");
@@ -147,9 +146,10 @@ public class BookCommands {
     public void assignGenre(
             @ShellOption(value = "--bookId") int bookId,
             @ShellOption(value = "--genreId") String genreId) {
-        boolean isOk = bookStorage.attachGenreToBookById(bookId, genreId);
-        if (isOk) {
+        Optional<Book> optionalBook = bookStorage.addGenreToBookById(bookId, genreId);
+        if (optionalBook.isPresent()) {
             System.out.println("Genre successfully assigned");
+            System.out.println(optionalBook.map(bookSerializer::serialize));
         } else {
             System.out.println("There is no book or genre with the given ID");
         }
@@ -160,9 +160,10 @@ public class BookCommands {
     public void excludeGenre(
             @ShellOption(value = "--bookId") int bookId,
             @ShellOption(value = "--genreId") String genreId) {
-        boolean isOk = bookStorage.detachGenreFromBookById(bookId, genreId);
-        if (isOk) {
+        Optional<Book> optionalBook = bookStorage.removeGenreFromBookById(bookId, genreId);
+        if (optionalBook.isPresent()) {
             System.out.println("Genre successfully excluded");
+            System.out.println(optionalBook.map(bookSerializer::serialize));
         } else {
             System.out.println(
                     "There is no book, no genre, nor their relationship with the given IDs");

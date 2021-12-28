@@ -74,6 +74,10 @@ public class BookStorageUnitOfWorkImpl implements BookStorageUnitOfWork {
                     "The identifier of the book being updated must not be null");
         }
 
+        if (book.getAuthors() == null) {
+
+        }
+
         return bookRepository.save(book);
     }
 
@@ -87,14 +91,12 @@ public class BookStorageUnitOfWorkImpl implements BookStorageUnitOfWork {
     @Override
     public Optional<Book> addAuthorToBookById(int bookId, int authorId) {
         Optional<BookAuthor> optionalBookAuthor = findBookAndAuthor(bookId, authorId);
-        if (optionalBookAuthor.isEmpty()){
+        if (optionalBookAuthor.isEmpty()) {
             return Optional.empty();
         }
         Book book = optionalBookAuthor.get().book;
         Author author = optionalBookAuthor.get().author;
-        if (!book.getAuthors().contains(author)) {
-            book.getAuthors().add(author);
-        }
+        book.getAuthors().add(author);
         return Optional.of(book);
     }
 
@@ -102,26 +104,26 @@ public class BookStorageUnitOfWorkImpl implements BookStorageUnitOfWork {
     @Override
     public Optional<Book> removeAuthorFromBookById(int bookId, int authorId) {
         Optional<BookAuthor> optionalBookAuthor = findBookAndAuthor(bookId, authorId);
-        if (optionalBookAuthor.isEmpty()){
+        if (optionalBookAuthor.isEmpty()) {
             return Optional.empty();
         }
         Book book = optionalBookAuthor.get().book;
-        book.getAuthors().remove(optionalBookAuthor.get().author);
-        return Optional.of(book);
+        if (book.getAuthors().remove(optionalBookAuthor.get().author)) {
+            return Optional.of(book);
+        }
+        return Optional.empty();
     }
 
     @Transactional
     @Override
     public Optional<Book> addGenreToBookById(int bookId, String genreId) {
         Optional<BookGenre> optionalBookGenre = findBookAndGenre(bookId, genreId);
-        if (optionalBookGenre.isEmpty()){
+        if (optionalBookGenre.isEmpty()) {
             return Optional.empty();
         }
         Book book = optionalBookGenre.get().book;
         Genre genre = optionalBookGenre.get().genre;
-        if (!book.getGenres().contains(genre)) {
-            book.getGenres().add(genre);
-        }
+        book.getGenres().add(genre);
         return Optional.of(book);
     }
 
@@ -129,15 +131,14 @@ public class BookStorageUnitOfWorkImpl implements BookStorageUnitOfWork {
     @Override
     public Optional<Book> removeGenreFromBookById(int bookId, String genreId) {
         Optional<BookGenre> optionalBookGenre = findBookAndGenre(bookId, genreId);
-        if (optionalBookGenre.isEmpty()){
+        if (optionalBookGenre.isEmpty()) {
             return Optional.empty();
         }
         Book book = optionalBookGenre.get().book;
-        book.getGenres().remove(optionalBookGenre.get().genre);
-        return Optional.of(book);
-    }
-
-    private record BookAuthor(Book book, Author author) {
+        if (book.getGenres().remove(optionalBookGenre.get().genre)) {
+            return Optional.of(book);
+        }
+        return Optional.empty();
     }
 
     private Optional<BookAuthor> findBookAndAuthor(int bookId, int authorId) {
@@ -149,9 +150,6 @@ public class BookStorageUnitOfWorkImpl implements BookStorageUnitOfWork {
         return Optional.of(new BookAuthor(optionalBook.get(), optionalAuthor.get()));
     }
 
-    private record BookGenre(Book book, Genre genre) {
-    }
-
     private Optional<BookGenre> findBookAndGenre(int bookId, String genreId) {
         Optional<Book> optionalBook = findById(bookId);
         Optional<Genre> optionalGenre = genreStorage.findById(genreId);
@@ -159,5 +157,11 @@ public class BookStorageUnitOfWorkImpl implements BookStorageUnitOfWork {
             return Optional.empty();
         }
         return Optional.of(new BookGenre(optionalBook.get(), optionalGenre.get()));
+    }
+
+    private record BookAuthor(Book book, Author author) {
+    }
+
+    private record BookGenre(Book book, Genre genre) {
     }
 }
