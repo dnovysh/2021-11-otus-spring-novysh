@@ -7,6 +7,7 @@ import org.springframework.shell.standard.ShellMethod;
 import org.springframework.shell.standard.ShellOption;
 import ru.otus.core.abstraction.BaseSerializer;
 import ru.otus.core.abstraction.BookStorageUnitOfWork;
+import ru.otus.core.dto.BookReviewsViewDto;
 import ru.otus.core.dto.BookUpdateDto;
 import ru.otus.core.entity.Book;
 
@@ -25,13 +26,16 @@ public class BookCommands {
     private final BookStorageUnitOfWork bookStorage;
     private final BaseSerializer<Book> bookSerializer;
     private final BaseSerializer<List<Book>> bookListSerializer;
+    private final BaseSerializer<BookReviewsViewDto> bookReviewsSerializer;
 
     public BookCommands(BookStorageUnitOfWork bookStorage,
                         BaseSerializer<Book> bookSerializer,
-                        BaseSerializer<List<Book>> bookListSerializer) {
+                        BaseSerializer<List<Book>> bookListSerializer,
+                        BaseSerializer<BookReviewsViewDto> bookReviewsSerializer) {
         this.bookStorage = bookStorage;
         this.bookSerializer = bookSerializer;
         this.bookListSerializer = bookListSerializer;
+        this.bookReviewsSerializer = bookReviewsSerializer;
     }
 
     @ShellMethod(value = "get book count command", key = {"b-count", "getBookCount"})
@@ -54,6 +58,17 @@ public class BookCommands {
             @ShellOption(defaultValue = BaseSerializer.DEFAULT_INDENT) String indent) {
         List<Book> books = bookStorage.findAll();
         System.out.println(bookListSerializer.serialize(books, indent));
+    }
+
+    @ShellMethod(value = "get book with reviews by id command",
+            key = {"b-review-id", "getBookReviewsById"})
+    public void getBookReviewsById(
+            int id,
+            @ShellOption(defaultValue = BaseSerializer.DEFAULT_INDENT) String indent) {
+        System.out.println(bookStorage.findBookReviewsById(id)
+                .map(b -> bookReviewsSerializer.serialize(b, indent))
+                .orElse("Book not found")
+        );
     }
 
     @ShellMethod(value = "add book command", key = {"b-add", "addBook"})

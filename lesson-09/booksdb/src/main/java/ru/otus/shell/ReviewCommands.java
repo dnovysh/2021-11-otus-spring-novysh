@@ -76,7 +76,7 @@ public class ReviewCommands {
             @DecimalMax(value = "5.0")
                     BigDecimal rating
     ) {
-        Review insertedReview = reviewStorage.create(new Review(title, text, rating, bookId));
+        Review insertedReview = reviewStorage.create(new Review(bookId, title, text, rating));
         System.out.println("Review successfully added:");
         System.out.println(reviewSerializer.serialize(insertedReview));
     }

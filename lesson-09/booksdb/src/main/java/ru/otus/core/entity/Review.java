@@ -25,6 +25,9 @@ public class Review {
     @Column(name = "id", nullable = false)
     private Integer id;
 
+    @Column(name = "book_id", nullable = false)
+    private Integer bookId;
+
     @NotBlank
     @Size(min = 1, max = 100)
     @Column(name = "title", nullable = false)
@@ -47,14 +50,11 @@ public class Review {
     @Column(name = "deleted", nullable = false)
     private boolean deleted;
 
-    @Column(name = "book_id", nullable = false)
-    private Integer bookId;
-
-    public Review(String title, String text, BigDecimal rating, Integer bookId) {
+    public Review(Integer bookId, String title, String text, BigDecimal rating) {
+        this.bookId = bookId;
         this.title = title;
         this.text = text;
         this.rating = rating;
-        this.bookId = bookId;
     }
 
     public void setUpdatableFields(String title, String text, BigDecimal rating){

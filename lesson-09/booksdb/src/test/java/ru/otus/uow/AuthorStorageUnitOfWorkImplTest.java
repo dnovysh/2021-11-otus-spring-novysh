@@ -1,48 +1,50 @@
-package ru.otus.dao;
+package ru.otus.uow;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
-import ru.otus.domain.Author;
+import ru.otus.core.entity.Author;
+import ru.otus.repository.AuthorEmRepository;
 
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertNull;
 
-@DisplayName("Dao for working with authors should")
-@JdbcTest
-@Import(AuthorDaoImpl.class)
-class AuthorDaoImplTest {
+@DisplayName("Unit of work for operations with authors should")
+@DataJpaTest
+@Import({AuthorStorageUnitOfWorkImpl.class, AuthorEmRepository.class})
+class AuthorStorageUnitOfWorkImplTest {
     private static final int EXPECTED_AUTHORS_COUNT = 8;
     private static final Author EXISTING_AUTHOR =
             new Author(1042, "Scott", null, "Oaks");
     private static final int NON_EXISTENT_AUTHOR_ID = 100;
 
     @Autowired
-    private AuthorDaoImpl authorDao;
+    private AuthorStorageUnitOfWorkImpl authorStorage;
 
     @DisplayName("return the expected count of authors")
     @Test
     void shouldReturnExpectedAuthorCount() {
-        int actualAuthorCount = authorDao.count();
+        long actualAuthorCount = authorStorage.count();
         assertThat(actualAuthorCount).isEqualTo(EXPECTED_AUTHORS_COUNT);
     }
 
     @DisplayName("return the expected author by its id")
     @Test
     void shouldReturnExpectedAuthorById() {
-        Author actualAuthor = authorDao.getById(EXISTING_AUTHOR.id());
-        assertThat(actualAuthor).usingRecursiveComparison().isEqualTo(EXISTING_AUTHOR);
+        var actualAuthor = authorStorage.findById(EXISTING_AUTHOR.getId());
+        assertThat(actualAuthor)
+                .isNotEmpty().get()
+                .usingRecursiveComparison().isEqualTo(EXISTING_AUTHOR);
     }
 
-    @DisplayName("return null for non-existent author id")
+    @DisplayName("return optional empty for non-existent author id")
     @Test
     void shouldReturnNullForNonExistentAuthorId() {
-        Author actualAuthor = authorDao.getById(NON_EXISTENT_AUTHOR_ID);
-        assertNull(actualAuthor);
+        var actualAuthor = authorStorage.findById(NON_EXISTENT_AUTHOR_ID);
+        assertThat(actualAuthor).isEmpty();
     }
 
     @DisplayName("return a list of all authors")
@@ -58,7 +60,7 @@ class AuthorDaoImplTest {
                 new Author(1042, "Scott", null, "Oaks"),
                 new Author(1071, "Shoko", null, "Azuma")
         );
-        List<Author> actualAuthors = authorDao.getAll();
+        List<Author> actualAuthors = authorStorage.findAll();
         assertThat(actualAuthors).hasSameElementsAs(expectedAuthors);
     }
 }

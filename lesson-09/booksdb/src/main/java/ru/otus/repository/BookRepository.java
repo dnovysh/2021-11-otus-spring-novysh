@@ -7,13 +7,13 @@ import java.util.Optional;
 
 public interface BookRepository {
 
-    public long count();
+    long count();
 
     Optional<Book> findById(Integer id);
 
-    public List<Book> findAll();
+    List<Book> findAll();
 
     Book save(Book review);
 
-    public void deleteById(Integer id);
+    void deleteById(Integer id);
 }

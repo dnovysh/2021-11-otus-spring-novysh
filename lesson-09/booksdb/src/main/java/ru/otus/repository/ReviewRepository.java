@@ -7,15 +7,15 @@ import java.util.Optional;
 
 public interface ReviewRepository {
 
-    public long count();
+    long count();
 
     Optional<Review> findById(Integer id);
 
-    public List<Review> findAll();
+    List<Review> findAll();
 
     List<Review> findAllByBookId(Integer bookId);
 
     Review save(Review review);
 
-    public void deleteById(Integer id);
+    void deleteById(Integer id);
 }

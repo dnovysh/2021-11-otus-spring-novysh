@@ -1,5 +1,6 @@
 package ru.otus.core.abstraction;
 
+import ru.otus.core.dto.BookReviewsViewDto;
 import ru.otus.core.dto.BookUpdateDto;
 import ru.otus.core.entity.Book;
 
@@ -8,17 +9,19 @@ import java.util.Optional;
 
 public interface BookStorageUnitOfWork {
 
-    public long count();
+    long count();
 
     Optional<Book> findById(Integer id);
 
-    public List<Book> findAll();
+    List<Book> findAll();
+
+    Optional<BookReviewsViewDto> findBookReviewsById(Integer id);
 
     Book create(Book book);
 
     Book update(BookUpdateDto bookUpdateDto);
 
-    public void deleteById(Integer id);
+    void deleteById(Integer id);
 
     Optional<Book> addAuthorToBookById(int bookId, int authorId);
 

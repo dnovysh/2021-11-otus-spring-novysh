@@ -83,3 +83,10 @@ INSERT INTO book_genre (book_id, genre_id) VALUES(969, '57.20.53');
 INSERT INTO book_genre (book_id, genre_id) VALUES(969, '57.64');
 INSERT INTO book_genre (book_id, genre_id) VALUES(1083, '58.22');
 INSERT INTO book_genre (book_id, genre_id) VALUES(1083, '31');
+
+-- review
+INSERT INTO review (id, book_id, title, text, rating, review_date, deleted) VALUES (265, 529, 'Great introduction to Kotlin', 'We started using Kotlin in 2019 and I used this book to introduce the team to it...', 5, '2020-12-28', false);
+INSERT INTO review (id, book_id, title, text, rating, review_date, deleted) VALUES (230, 529, 'Awesome reference', 'I really love this book, and expect to be referring back to it for many years to come. ', 5, '2021-03-25', false);
+INSERT INTO review (id, book_id, title, text, rating, review_date, deleted) VALUES (170, 529, 'Great introduction to Kotlin but needs to be updated', 'This is a great place to start if you need to get up to speed with Kotlin fast...', 4.5, '2019-02-15', false);
+INSERT INTO review (id, book_id, title, text, rating, review_date, deleted) VALUES (109, 529, 'Excellent book for the experienced Java developer looking to learn Kotlin', ' I think this book is excellent, one of the best programming books I have ever read.', 5, '2018-08-14', false);
+INSERT INTO review (id, book_id, title, text, rating, review_date, deleted) VALUES (103, 529, 'THE Kotlin book', null, 5, '2018-08-01', false);

@@ -4,12 +4,14 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import ru.otus.core.abstraction.AuthorStorageUnitOfWork;
 import ru.otus.core.abstraction.BookStorageUnitOfWork;
+import ru.otus.core.dto.BookReviewsViewDto;
 import ru.otus.core.dto.BookUpdateDto;
 import ru.otus.core.entity.Author;
 import ru.otus.core.entity.Book;
 import ru.otus.core.entity.Genre;
 import ru.otus.repository.BookRepository;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -45,6 +47,18 @@ public class BookStorageUnitOfWorkImpl implements BookStorageUnitOfWork {
     public List<Book> findAll() {
         return bookRepository.findAll();
     }
+
+    @Transactional(readOnly = true)
+    @Override
+    public Optional<BookReviewsViewDto> findBookReviewsById(Integer id) {
+        return bookRepository.findById(id).map((b) -> {
+            return new BookReviewsViewDto(
+                    b.getId(),
+                    b.getTitle(),
+                    b.getPublishedDate(),
+                    new ArrayList<>(b.getReviews()));
+        });
+     }
 
     @Transactional
     @Override
