@@ -4,6 +4,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import ru.otus.core.abstraction.AuthorStorageUnitOfWork;
 import ru.otus.core.abstraction.BookStorageUnitOfWork;
+import ru.otus.core.dto.BookUpdateDto;
 import ru.otus.core.entity.Author;
 import ru.otus.core.entity.Book;
 import ru.otus.core.entity.Genre;
@@ -63,22 +64,20 @@ public class BookStorageUnitOfWorkImpl implements BookStorageUnitOfWork {
 
     @Transactional
     @Override
-    public Book update(Book book) {
-        if (book == null) {
+    public Book update(BookUpdateDto bookUpdateDto) {
+        if (bookUpdateDto == null) {
             throw new IllegalArgumentException(
                     "The book being updated must not be null");
         }
-
-        if (book.getId() == null) {
+        if (bookUpdateDto.id() == null) {
             throw new IllegalArgumentException(
                     "The identifier of the book being updated must not be null");
         }
-
-        if (book.getAuthors() == null) {
-
+        var optionalBook = bookRepository.findById(bookUpdateDto.id());
+        if (optionalBook.isEmpty()) {
+            return null;
         }
-
-        return bookRepository.save(book);
+        return optionalBook.map(bookUpdateDto::applyToBook).get();
     }
 
     @Transactional

@@ -34,6 +34,15 @@ public class ReviewEmRepository implements ReviewRepository {
     }
 
     @Override
+    public List<Review> findAllByBookId(Integer bookId) {
+        return em.createQuery(
+                        "select r from Review r where r.bookId=:bookId order by r.reviewDate, r.id",
+                        Review.class)
+                .setParameter("bookId", bookId)
+                .getResultList();
+    }
+
+    @Override
     public Review save(Review review) {
         if (review.getId() == null) {
             em.persist(review);

@@ -1,5 +1,7 @@
 package ru.otus.core.abstraction;
 
+import org.springframework.shell.standard.ShellOption;
+import ru.otus.core.dto.ReviewUpdateDto;
 import ru.otus.core.entity.Review;
 
 import java.util.List;
@@ -13,9 +15,11 @@ public interface ReviewStorageUnitOfWork {
 
     public List<Review> findAll();
 
+    public List<Review> findAllByBookId(Integer bookId);
+
     Review create(Review review);
 
-    Review update(Review review);
+    Review update(ReviewUpdateDto reviewUpdateDto);
 
     public void deleteById(Integer id);
 }

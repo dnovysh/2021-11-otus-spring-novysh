@@ -7,6 +7,7 @@ import org.springframework.shell.standard.ShellMethod;
 import org.springframework.shell.standard.ShellOption;
 import ru.otus.core.abstraction.BaseSerializer;
 import ru.otus.core.abstraction.BookStorageUnitOfWork;
+import ru.otus.core.dto.BookUpdateDto;
 import ru.otus.core.entity.Book;
 
 import javax.validation.constraints.DecimalMax;
@@ -100,11 +101,15 @@ public class BookCommands {
                     message = "Published date must be in ISO format: YYYY-MM-DD")
                     String publishedDate
     ) {
-        Book updatedBook = bookStorage.update(new Book(
+        Book updatedBook = bookStorage.update(new BookUpdateDto(
                 id, title, totalPages, rating, isbn,
                 Optional.ofNullable(publishedDate).map(Date::valueOf).orElse(null)));
-        System.out.println("Updated book:");
-        System.out.println(bookSerializer.serialize(updatedBook));
+        if (updatedBook != null) {
+            System.out.println("Updated book:");
+            System.out.println(bookSerializer.serialize(updatedBook));
+        } else {
+            System.out.println("Book not found");
+        }
     }
 
     @ShellMethod(value = "remove book by id command", key = {"b-remove", "removeBook"})

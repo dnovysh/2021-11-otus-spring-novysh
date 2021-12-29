@@ -50,6 +50,19 @@ public class Review {
     @Column(name = "book_id", nullable = false)
     private Integer bookId;
 
+    public Review(String title, String text, BigDecimal rating, Integer bookId) {
+        this.title = title;
+        this.text = text;
+        this.rating = rating;
+        this.bookId = bookId;
+    }
+
+    public void setUpdatableFields(String title, String text, BigDecimal rating){
+        this.title = title;
+        this.text = text;
+        this.rating = rating;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

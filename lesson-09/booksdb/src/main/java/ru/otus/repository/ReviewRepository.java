@@ -13,6 +13,8 @@ public interface ReviewRepository {
 
     public List<Review> findAll();
 
+    List<Review> findAllByBookId(Integer bookId);
+
     Review save(Review review);
 
     public void deleteById(Integer id);

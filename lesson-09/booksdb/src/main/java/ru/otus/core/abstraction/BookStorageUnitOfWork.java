@@ -1,5 +1,6 @@
 package ru.otus.core.abstraction;
 
+import ru.otus.core.dto.BookUpdateDto;
 import ru.otus.core.entity.Book;
 
 import java.util.List;
@@ -15,7 +16,7 @@ public interface BookStorageUnitOfWork {
 
     Book create(Book book);
 
-    Book update(Book book);
+    Book update(BookUpdateDto bookUpdateDto);
 
     public void deleteById(Integer id);
 
