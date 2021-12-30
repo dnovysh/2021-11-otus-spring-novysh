@@ -51,5 +51,5 @@ INSERT INTO book_genre (book_id, genre_id) VALUES(757, '57.64');
 
 -- review
 INSERT INTO review (id, book_id, title, text, rating, review_date, deleted) VALUES (265, 529, 'Great introduction to Kotlin', 'We started using Kotlin in 2019 and I used this book to introduce the team to it...', 5, '2020-12-28', false);
-INSERT INTO review (id, book_id, title, text, rating, review_date, deleted) VALUES (230, 529, 'Awesome reference', 'I really love this book, and expect to be referring back to it for many years to come. ', 5, '2021-03-25', false);
+INSERT INTO review (id, book_id, title, text, rating, review_date, deleted) VALUES (230, 529, 'Awesome reference', 'I really love this book, and expect to be referring back to it for many years to come.', 5, '2021-03-25', false);
 INSERT INTO review (id, book_id, title, text, rating, review_date, deleted) VALUES (103, 529, 'THE Kotlin book', null, 5, '2018-08-01', false);
