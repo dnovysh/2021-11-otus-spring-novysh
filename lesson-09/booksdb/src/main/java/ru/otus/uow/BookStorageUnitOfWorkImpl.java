@@ -4,6 +4,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import ru.otus.core.abstraction.AuthorStorageUnitOfWork;
 import ru.otus.core.abstraction.BookStorageUnitOfWork;
+import ru.otus.core.abstraction.GenreStorageUnitOfWork;
 import ru.otus.core.dto.BookReviewsViewDto;
 import ru.otus.core.dto.BookUpdateDto;
 import ru.otus.core.entity.Author;
@@ -20,11 +21,11 @@ public class BookStorageUnitOfWorkImpl implements BookStorageUnitOfWork {
 
     private final BookRepository bookRepository;
     private final AuthorStorageUnitOfWork authorStorage;
-    private final GenreStorageUnitOfWorkImpl genreStorage;
+    private final GenreStorageUnitOfWork genreStorage;
 
     public BookStorageUnitOfWorkImpl(BookRepository bookRepository,
                                      AuthorStorageUnitOfWork authorStorage,
-                                     GenreStorageUnitOfWorkImpl genreStorage) {
+                                     GenreStorageUnitOfWork genreStorage) {
         this.bookRepository = bookRepository;
         this.authorStorage = authorStorage;
         this.genreStorage = genreStorage;
