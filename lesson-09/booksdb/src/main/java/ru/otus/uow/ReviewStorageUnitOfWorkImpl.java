@@ -8,6 +8,7 @@ import ru.otus.core.entity.Review;
 import ru.otus.repository.ReviewRepository;
 
 import java.sql.Date;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -55,7 +56,7 @@ public class ReviewStorageUnitOfWorkImpl implements ReviewStorageUnitOfWork {
             throw new IllegalArgumentException(
                     "The identifier for the review being created must not be set");
         }
-        review.setReviewDate(new Date(System.currentTimeMillis()));
+        review.setReviewDate(Date.valueOf(LocalDate.now()));
         review.setDeleted(false);
         return reviewRepository.save(review);
     }
