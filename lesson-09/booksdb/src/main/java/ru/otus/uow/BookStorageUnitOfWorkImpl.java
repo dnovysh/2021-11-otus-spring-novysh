@@ -1,5 +1,6 @@
 package ru.otus.uow;
 
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import ru.otus.core.abstraction.AuthorStorageUnitOfWork;
@@ -59,7 +60,7 @@ public class BookStorageUnitOfWorkImpl implements BookStorageUnitOfWork {
                     b.getPublishedDate(),
                     new ArrayList<>(b.getReviews()));
         });
-     }
+    }
 
     @Transactional
     @Override
@@ -106,7 +107,7 @@ public class BookStorageUnitOfWorkImpl implements BookStorageUnitOfWork {
     public Optional<Book> addAuthorToBookById(int bookId, int authorId) {
         Optional<BookAuthor> optionalBookAuthor = findBookAndAuthor(bookId, authorId);
         if (optionalBookAuthor.isEmpty()) {
-            return Optional.empty();
+            throw new DataIntegrityViolationException("Book or author does not exist");
         }
         Book book = optionalBookAuthor.get().book;
         Author author = optionalBookAuthor.get().author;

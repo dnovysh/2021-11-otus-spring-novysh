@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.context.annotation.Import;
+import org.springframework.dao.DataIntegrityViolationException;
 import ru.otus.core.dto.BookReviewsViewDto;
 import ru.otus.core.dto.BookUpdateDto;
 import ru.otus.core.entity.Author;
@@ -23,7 +24,9 @@ import java.util.List;
 import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @DisplayName("Unit of work for operations with books should")
 @DataJpaTest
@@ -121,7 +124,7 @@ class BookStorageUnitOfWorkImplTest {
 
     @DisplayName("return optional empty for non-existent book id")
     @Test
-    void shouldReturnNullForNonExistentBookId() {
+    void shouldReturnEmptyForNonExistentBookId() {
         var actualBook = bookStorage.findById(NON_EXISTENT_BOOK_ID);
         assertThat(actualBook).isEmpty();
     }
@@ -206,7 +209,7 @@ class BookStorageUnitOfWorkImplTest {
         );
     }
 
-    @DisplayName("update the book correctly")
+    @DisplayName("update book correctly")
     @Test
     void shouldUpdateBookCorrectly() {
         int bookId = 253;
@@ -215,15 +218,12 @@ class BookStorageUnitOfWorkImplTest {
         assertThat(originalBook.getAuthors().size()).isEqualTo(4);
         assertThat(originalBook.getGenres().size()).isEqualTo(2);
         assertThat(originalBook.getReviews().size()).isZero();
+        em.detach(originalBook);
         var expectedTitle = "Foo Bar";
         var expectedTotalPages = 900;
         var expectedRating = BigDecimal.valueOf(250, 2);
-        var expectedIsbn = "9780137673628";
+        var expectedIsbn = "9785970607923";
         var expectedPublishedDate = Date.valueOf("1986-03-25");
-        BookUpdateDto bookUpdateDto = new BookUpdateDto(
-                bookId, expectedTitle, expectedTotalPages, expectedRating, expectedIsbn,
-                expectedPublishedDate
-        );
         var expectedBook = new Book(
                 bookId, expectedTitle, expectedTotalPages, expectedRating, expectedIsbn,
                 expectedPublishedDate,
@@ -231,8 +231,12 @@ class BookStorageUnitOfWorkImplTest {
                 originalBook.getGenres(),
                 originalBook.getReviews()
         );
-        em.detach(originalBook);
+        BookUpdateDto bookUpdateDto = new BookUpdateDto(
+                bookId, expectedTitle, expectedTotalPages, expectedRating, expectedIsbn,
+                expectedPublishedDate
+        );
         var updatedBook = bookStorage.update(bookUpdateDto);
+        em.flush();
         assertThat(updatedBook.getAuthors().size()).isEqualTo(4);
         assertThat(updatedBook.getGenres().size()).isEqualTo(2);
         assertThat(updatedBook.getReviews().size()).isZero();
@@ -241,6 +245,7 @@ class BookStorageUnitOfWorkImplTest {
         assertThat(actualBook.getAuthors().size()).isEqualTo(4);
         assertThat(actualBook.getGenres().size()).isEqualTo(2);
         assertThat(actualBook.getReviews().size()).isZero();
+        assertThat(actualBook).isNotSameAs(updatedBook);
         assertThat(updatedBook)
                 .usingRecursiveComparison()
                 .isEqualTo(expectedBook);
@@ -249,7 +254,7 @@ class BookStorageUnitOfWorkImplTest {
                 .isEqualTo(expectedBook);
     }
 
-    @DisplayName("delete the book by its ID correctly")
+    @DisplayName("delete book by its ID correctly")
     @Test
     void shouldDeleteBookCorrectly() {
         final int existingBookId = EXISTING_BOOK.getId();
@@ -273,7 +278,7 @@ class BookStorageUnitOfWorkImplTest {
         assertThat(actualCountBook).isEqualTo(originalCountBook - 1);
     }
 
-    @DisplayName("add the author to the book by their IDs")
+    @DisplayName("add author to book by their IDs")
     @Test
     void shouldAddAuthorToBookById() {
         final int bookId = 757;
@@ -282,15 +287,48 @@ class BookStorageUnitOfWorkImplTest {
         var author = em.find(Author.class, authorId);
         assertThat(originalBook).isNotNull();
         assertThat(originalBook.getAuthors()).doesNotContain(author);
-        var bookWithAddedAuthor = bookStorage.addAuthorToBookById(bookId, authorId);
-
-        assertThat(bookWithAddedAuthor).isNotEmpty();
-        assertThat(bookWithAddedAuthor.get().getId()).isEqualTo(bookId);
-        assertThat(bookWithAddedAuthor.get().getAuthors()).containsOnlyOnce(author);
         em.detach(originalBook);
+        var optionalBookWithAddedAuthor =
+                bookStorage.addAuthorToBookById(bookId, authorId);
         em.flush();
+        assertThat(optionalBookWithAddedAuthor).isNotEmpty();
+        var bookWithAddedAuthor = optionalBookWithAddedAuthor.get();
+        assertThat(bookWithAddedAuthor.getId()).isEqualTo(bookId);
+        assertThat(bookWithAddedAuthor.getAuthors()).containsOnlyOnce(author);
+        em.detach(bookWithAddedAuthor);
         var actualBook = em.find(Book.class, bookId);
+        assertThat(actualBook).isNotSameAs(bookWithAddedAuthor);
         assertThat(actualBook.getAuthors()).containsOnlyOnce(author);
+    }
+
+    @DisplayName("add author should return raise DataIntegrityViolationException if book does not exist")
+    @Test
+    void addAuthorShouldRaiseExceptionIfBookDoesNotExist() {
+        final int nonExistentBookId = 200;
+        final int existingAuthorId = 987;
+        assertThat(bookStorage.findById(nonExistentBookId)).isEmpty();
+        assertThat(em.find(Author.class, existingAuthorId)).isNotNull();
+        assertThatThrownBy(
+                () -> {
+                    bookStorage.addAuthorToBookById(nonExistentBookId, existingAuthorId);
+                    em.flush();
+                }
+        ).isExactlyInstanceOf(DataIntegrityViolationException.class);
+    }
+
+    @DisplayName("add author should return raise DataIntegrityViolationException if author does not exist")
+    @Test
+    void addAuthorShouldRaiseExceptionIfAuthorDoesNotExist() {
+        final int existingBookId = 757;
+        final int nonExistentAuthorId = 200;
+        assertThat(bookStorage.findById(existingBookId)).isNotEmpty();
+        assertThat(em.find(Author.class, nonExistentAuthorId)).isNull();
+        assertThatThrownBy(
+                () -> {
+                    bookStorage.addAuthorToBookById(existingBookId, nonExistentAuthorId);
+                    em.flush();
+                }
+        ).isExactlyInstanceOf(DataIntegrityViolationException.class);
     }
 
 
