@@ -1,6 +1,7 @@
 package ru.otus.uow;
 
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import ru.otus.core.abstraction.AuthorStorageUnitOfWork;
@@ -111,6 +112,9 @@ public class BookStorageUnitOfWorkImpl implements BookStorageUnitOfWork {
         }
         Book book = optionalBookAuthor.get().book;
         Author author = optionalBookAuthor.get().author;
+        if (book.getAuthors().contains(author)) {
+            throw new DuplicateKeyException("Author has already been assigned");
+        }
         book.getAuthors().add(author);
         return Optional.of(book);
     }
@@ -134,10 +138,13 @@ public class BookStorageUnitOfWorkImpl implements BookStorageUnitOfWork {
     public Optional<Book> addGenreToBookById(int bookId, String genreId) {
         Optional<BookGenre> optionalBookGenre = findBookAndGenre(bookId, genreId);
         if (optionalBookGenre.isEmpty()) {
-            return Optional.empty();
+            throw new DataIntegrityViolationException("Book or genre does not exist");
         }
         Book book = optionalBookGenre.get().book;
         Genre genre = optionalBookGenre.get().genre;
+        if (book.getGenres().contains(genre)) {
+            throw new DuplicateKeyException("Genre has already been assigned");
+        }
         book.getGenres().add(genre);
         return Optional.of(book);
     }

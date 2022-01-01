@@ -7,6 +7,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.context.annotation.Import;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.DuplicateKeyException;
 import ru.otus.core.dto.BookReviewsViewDto;
 import ru.otus.core.dto.BookUpdateDto;
 import ru.otus.core.entity.Author;
@@ -81,7 +82,7 @@ class BookStorageUnitOfWorkImplTest {
                     Set.of(
                             new Genre("08", "Artificial Intelligence", null),
                             new Genre("57.64", "Technology", "57")
-                    ), new ArrayList<Review>()),
+                    ), new ArrayList<>()),
             EXISTING_BOOK,
             new Book(757, "Java Performance: The Definitive Guide", 500,
                     BigDecimal.valueOf(438, 2),
@@ -94,7 +95,7 @@ class BookStorageUnitOfWorkImplTest {
                             new Genre("57.20.61", "Software", "57.20"),
                             new Genre("57.20.63", "Technical", "57.20"),
                             new Genre("57.64", "Technology", "57")
-                    ), new ArrayList<Review>())
+                    ), new ArrayList<>())
     );
 
     private static final int NON_EXISTENT_BOOK_ID = 100;
@@ -331,5 +332,156 @@ class BookStorageUnitOfWorkImplTest {
         ).isExactlyInstanceOf(DataIntegrityViolationException.class);
     }
 
+    @DisplayName("add an author should raise DuplicateKeyException if the relationship already exists")
+    @Test
+    void addAuthorShouldRaiseExceptionIfRelationshipAlreadyExists() {
+        final int bookId = 529;
+        final int authorId = 333;
+        var originalBook = em.find(Book.class, bookId);
+        var originalAuthor = em.find(Author.class, authorId);
+        assertThat(originalBook).isNotNull();
+        assertThat(originalAuthor).isNotNull();
+        assertThat(originalBook.getAuthors()).contains(originalAuthor);
+        em.detach(originalBook);
+        em.detach(originalAuthor);
+        assertThatThrownBy(
+                () -> {
+                    bookStorage.addAuthorToBookById(bookId, authorId);
+                    em.flush();
+                }
+        ).isExactlyInstanceOf(DuplicateKeyException.class);
+    }
 
+    @DisplayName("remove author from book by id")
+    @Test
+    void shouldRemoveAuthorFromBookById() {
+        final int bookId = 529;
+        final int authorId = 333;
+        var count = em.getEntityManager()
+                .createQuery("select count(b) from Book b where b.id = :bookId" +
+                                " and (select a from Author a where a.id = :authorId) member of b.authors"
+                        , Long.class)
+                .setParameter("bookId", bookId)
+                .setParameter("authorId", authorId)
+                .getSingleResult();
+        assertThat(count).isEqualTo(1);
+        em.clear();
+        var optionalBook = bookStorage.removeAuthorFromBookById(bookId, authorId);
+        em.flush();
+        assertThat(optionalBook).isNotEmpty();
+        var book = optionalBook.get();
+        assertThat(book.getAuthors().stream().filter(a -> a.getId() == authorId).count()).isZero();
+        em.detach(book);
+        var actualCount = em.getEntityManager()
+                .createQuery("select count(b) from Book b where b.id = :bookId" +
+                                " and (select a from Author a where a.id = :authorId) member of b.authors"
+                        , Long.class)
+                .setParameter("bookId", bookId)
+                .setParameter("authorId", authorId)
+                .getSingleResult();
+        assertThat(actualCount).isZero();
+    }
+
+    @DisplayName("add genre to book by their IDs")
+    @Test
+    void shouldAddGenreToBookById() {
+        final var bookId = 757;
+        final var genreId = "57.20.54";
+        var originalBook = em.find(Book.class, bookId);
+        var genre = em.find(Genre.class, genreId);
+        assertThat(originalBook).isNotNull();
+        assertThat(originalBook.getGenres()).doesNotContain(genre);
+        em.detach(originalBook);
+        var optionalBookWithAddedGenre =
+                bookStorage.addGenreToBookById(bookId, genreId);
+        em.flush();
+        assertThat(optionalBookWithAddedGenre).isNotEmpty();
+        var bookWithAddedGenre = optionalBookWithAddedGenre.get();
+        assertThat(bookWithAddedGenre.getId()).isEqualTo(bookId);
+        assertThat(bookWithAddedGenre.getGenres()).containsOnlyOnce(genre);
+        em.detach(bookWithAddedGenre);
+        var actualBook = em.find(Book.class, bookId);
+        assertThat(actualBook).isNotSameAs(bookWithAddedGenre);
+        assertThat(actualBook.getGenres()).containsOnlyOnce(genre);
+    }
+
+    @DisplayName("add genre should return raise DataIntegrityViolationException if book does not exist")
+    @Test
+    void addGenreShouldRaiseExceptionIfBookDoesNotExist() {
+        final var nonExistentBookId = 200;
+        final var existingGenreId = "57.20.54";
+        assertThat(bookStorage.findById(nonExistentBookId)).isEmpty();
+        assertThat(em.find(Genre.class, existingGenreId)).isNotNull();
+        assertThatThrownBy(
+                () -> {
+                    bookStorage.addGenreToBookById(nonExistentBookId, existingGenreId);
+                    em.flush();
+                }
+        ).isExactlyInstanceOf(DataIntegrityViolationException.class);
+    }
+
+    @DisplayName("add genre should return raise DataIntegrityViolationException if genre does not exist")
+    @Test
+    void addGenreShouldRaiseExceptionIfGenreDoesNotExist() {
+        final var existingBookId = 757;
+        final var nonExistentGenreId = "05.20";
+        assertThat(bookStorage.findById(existingBookId)).isNotEmpty();
+        assertThat(em.find(Genre.class, nonExistentGenreId)).isNull();
+        assertThatThrownBy(
+                () -> {
+                    bookStorage.addGenreToBookById(existingBookId, nonExistentGenreId);
+                    em.flush();
+                }
+        ).isExactlyInstanceOf(DataIntegrityViolationException.class);
+    }
+
+    @DisplayName("add an genre should raise DuplicateKeyException if the relationship already exists")
+    @Test
+    void addGenreShouldRaiseExceptionIfRelationshipAlreadyExists() {
+        final var bookId = 529;
+        final var genreId = "57.20.54";
+        var originalBook = em.find(Book.class, bookId);
+        var originalGenre = em.find(Genre.class, genreId);
+        assertThat(originalBook).isNotNull();
+        assertThat(originalGenre).isNotNull();
+        assertThat(originalBook.getGenres()).contains(originalGenre);
+        em.detach(originalBook);
+        em.detach(originalGenre);
+        assertThatThrownBy(
+                () -> {
+                    bookStorage.addGenreToBookById(bookId, genreId);
+                    em.flush();
+                }
+        ).isExactlyInstanceOf(DuplicateKeyException.class);
+    }
+
+    @DisplayName("remove genre from book by id")
+    @Test
+    void shouldRemoveGenreFromBookById() {
+        final var bookId = 529;
+        final var genreId = "57.20.54";
+        var count = em.getEntityManager()
+                .createQuery("select count(b) from Book b where b.id = :bookId" +
+                                " and (select a from Genre a where a.id = :genreId) member of b.genres"
+                        , Long.class)
+                .setParameter("bookId", bookId)
+                .setParameter("genreId", genreId)
+                .getSingleResult();
+        assertThat(count).isEqualTo(1);
+        em.clear();
+        var optionalBook = bookStorage.removeGenreFromBookById(bookId, genreId);
+        em.flush();
+        assertThat(optionalBook).isNotEmpty();
+        var book = optionalBook.get();
+        assertThat(book.getGenres().stream().filter(a -> a.getId().equals(genreId)).count()).isZero();
+        em.detach(book);
+        var actualCount = em.getEntityManager()
+                .createQuery("select count(b) from Book b where b.id = :bookId" +
+                                " and (select a from Genre a where a.id = :genreId) member of b.genres"
+                        , Long.class)
+                .setParameter("bookId", bookId)
+                .setParameter("genreId", genreId)
+                .getSingleResult();
+        assertThat(actualCount).isZero();
+    }
 }
