@@ -7,6 +7,7 @@ import org.springframework.shell.standard.ShellMethod;
 import org.springframework.shell.standard.ShellOption;
 import ru.otus.core.abstraction.BaseSerializer;
 import ru.otus.core.abstraction.BookStorageUnitOfWork;
+import ru.otus.core.abstraction.SerializerFactory;
 import ru.otus.core.dto.BookReviewsViewDto;
 import ru.otus.core.dto.BookUpdateDto;
 import ru.otus.core.entity.Book;
@@ -29,13 +30,13 @@ public class BookCommands {
     private final BaseSerializer<BookReviewsViewDto> bookReviewsSerializer;
 
     public BookCommands(BookStorageUnitOfWork bookStorage,
-                        BaseSerializer<Book> bookSerializer,
-                        BaseSerializer<List<Book>> bookListSerializer,
-                        BaseSerializer<BookReviewsViewDto> bookReviewsSerializer) {
+                        SerializerFactory<Book> bookSerializerFactory,
+                        SerializerFactory<List<Book>> booksSerializerFactory,
+                        SerializerFactory<BookReviewsViewDto> bookReviewsSerializerFactory) {
         this.bookStorage = bookStorage;
-        this.bookSerializer = bookSerializer;
-        this.bookListSerializer = bookListSerializer;
-        this.bookReviewsSerializer = bookReviewsSerializer;
+        this.bookSerializer = bookSerializerFactory.getSerializer();
+        this.bookListSerializer = booksSerializerFactory.getSerializer();
+        this.bookReviewsSerializer = bookReviewsSerializerFactory.getSerializer();
     }
 
     @ShellMethod(value = "get book count command", key = {"b-count", "getBookCount"})

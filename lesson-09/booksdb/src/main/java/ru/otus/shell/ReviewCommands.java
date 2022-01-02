@@ -6,6 +6,7 @@ import org.springframework.shell.standard.ShellMethod;
 import org.springframework.shell.standard.ShellOption;
 import ru.otus.core.abstraction.BaseSerializer;
 import ru.otus.core.abstraction.ReviewStorageUnitOfWork;
+import ru.otus.core.abstraction.SerializerFactory;
 import ru.otus.core.dto.ReviewUpdateDto;
 import ru.otus.core.entity.Review;
 
@@ -23,11 +24,11 @@ public class ReviewCommands {
     private final BaseSerializer<List<Review>> reviewListSerializer;
 
     public ReviewCommands(ReviewStorageUnitOfWork reviewStorage,
-                          BaseSerializer<Review> reviewSerializer,
-                          BaseSerializer<List<Review>> reviewListSerializer) {
+                          SerializerFactory<Review> reviewSerializerFactory,
+                          SerializerFactory<List<Review>> reviewListSerializerFactory) {
         this.reviewStorage = reviewStorage;
-        this.reviewSerializer = reviewSerializer;
-        this.reviewListSerializer = reviewListSerializer;
+        this.reviewSerializer = reviewSerializerFactory.getSerializer();
+        this.reviewListSerializer = reviewListSerializerFactory.getSerializer();
     }
 
     @ShellMethod(value = "get review count command", key = {"r-count", "getReviewCount"})

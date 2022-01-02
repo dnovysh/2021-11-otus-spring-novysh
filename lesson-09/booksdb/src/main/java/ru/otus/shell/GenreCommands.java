@@ -6,6 +6,7 @@ import org.springframework.shell.standard.ShellMethod;
 import org.springframework.shell.standard.ShellOption;
 import ru.otus.core.abstraction.BaseSerializer;
 import ru.otus.core.abstraction.GenreStorageUnitOfWork;
+import ru.otus.core.abstraction.SerializerFactory;
 import ru.otus.core.entity.Genre;
 import ru.otus.core.entity.GenreClassifierView;
 import ru.otus.core.entity.GenreParentsView;
@@ -24,17 +25,17 @@ public class GenreCommands {
     private final BaseSerializer<GenreParentsView> genreParentsViewSerializer;
 
     public GenreCommands(GenreStorageUnitOfWork genreStorage,
-                         BaseSerializer<Genre> genreSerializer,
-                         BaseSerializer<List<Genre>> genreListSerializer,
-                         BaseSerializer<GenreClassifierView> genreClassifierSerializer,
-                         BaseSerializer<List<GenreClassifierView>> genreClassifierListSerializer,
-                         BaseSerializer<GenreParentsView> genreParentsViewSerializer) {
+                         SerializerFactory<Genre> genreSerializerFactory,
+                         SerializerFactory<List<Genre>> genreListSerializerFactory,
+                         SerializerFactory<GenreClassifierView> genreClassifierSerializerFactory,
+                         SerializerFactory<List<GenreClassifierView>> genreClassifierListSerializerFactory,
+                         SerializerFactory<GenreParentsView> genreParentsViewSerializerFactory) {
         this.genreStorage = genreStorage;
-        this.genreSerializer = genreSerializer;
-        this.genreListSerializer = genreListSerializer;
-        this.genreClassifierSerializer = genreClassifierSerializer;
-        this.genreClassifierListSerializer = genreClassifierListSerializer;
-        this.genreParentsViewSerializer = genreParentsViewSerializer;
+        this.genreSerializer = genreSerializerFactory.getSerializer();
+        this.genreListSerializer = genreListSerializerFactory.getSerializer();
+        this.genreClassifierSerializer = genreClassifierSerializerFactory.getSerializer();
+        this.genreClassifierListSerializer = genreClassifierListSerializerFactory.getSerializer();
+        this.genreParentsViewSerializer = genreParentsViewSerializerFactory.getSerializer();
     }
 
     @ShellMethod(value = "get genre count command", key = {"g-count", "getGenreCount"})

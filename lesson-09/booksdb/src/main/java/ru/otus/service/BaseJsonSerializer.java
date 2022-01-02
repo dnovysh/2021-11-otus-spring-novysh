@@ -7,7 +7,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import ru.otus.core.abstraction.BaseSerializer;
 
-public abstract class BaseJsonSerializer<T> implements BaseSerializer<T> {
+public class BaseJsonSerializer<T> implements BaseSerializer<T> {
 
     private final ObjectMapper mapper;
     private final DefaultPrettyPrinter prettyPrinter;

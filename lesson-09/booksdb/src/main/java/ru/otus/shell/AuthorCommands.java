@@ -6,6 +6,7 @@ import org.springframework.shell.standard.ShellMethod;
 import org.springframework.shell.standard.ShellOption;
 import ru.otus.core.abstraction.AuthorStorageUnitOfWork;
 import ru.otus.core.abstraction.BaseSerializer;
+import ru.otus.core.abstraction.SerializerFactory;
 import ru.otus.core.entity.Author;
 
 import java.util.List;
@@ -18,11 +19,11 @@ public class AuthorCommands {
     private final BaseSerializer<List<Author>> authorListSerializer;
 
     public AuthorCommands(AuthorStorageUnitOfWork authorStorage,
-                          BaseSerializer<Author> authorSerializer,
-                          BaseSerializer<List<Author>> authorListSerializer) {
+                          SerializerFactory<Author> authorSerializerFactory,
+                          SerializerFactory<List<Author>> authorsSerializerFactory) {
         this.authorStorage = authorStorage;
-        this.authorSerializer = authorSerializer;
-        this.authorListSerializer = authorListSerializer;
+        this.authorSerializer = authorSerializerFactory.getSerializer();
+        this.authorListSerializer = authorsSerializerFactory.getSerializer();
     }
 
     @ShellMethod(value = "get author count command", key = {"a-count", "getAuthorCount"})
