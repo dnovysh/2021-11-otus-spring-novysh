@@ -1,4 +1,4 @@
-package ru.otus.uow;
+package ru.otus.service.storage;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -7,22 +7,23 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
 import ru.otus.core.entity.Author;
 import ru.otus.repository.AuthorEmRepository;
+import ru.otus.service.storage.AuthorStorageServiceImpl;
 
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@DisplayName("Unit of work for operations with authors should")
+@DisplayName("Service for operations with authors should")
 @DataJpaTest
-@Import({AuthorStorageUnitOfWorkImpl.class, AuthorEmRepository.class})
-class AuthorStorageUnitOfWorkImplTest {
+@Import({AuthorStorageServiceImpl.class, AuthorEmRepository.class})
+class AuthorStorageServiceImplTest {
     private static final int EXPECTED_AUTHORS_COUNT = 8;
     private static final Author EXISTING_AUTHOR =
             new Author(1042, "Scott", null, "Oaks");
     private static final int NON_EXISTENT_AUTHOR_ID = 100;
 
     @Autowired
-    private AuthorStorageUnitOfWorkImpl authorStorage;
+    private AuthorStorageServiceImpl authorStorage;
 
     @DisplayName("return the expected count of authors")
     @Test

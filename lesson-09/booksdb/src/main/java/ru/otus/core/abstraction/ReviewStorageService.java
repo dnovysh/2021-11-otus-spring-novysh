@@ -6,7 +6,7 @@ import ru.otus.core.entity.Review;
 import java.util.List;
 import java.util.Optional;
 
-public interface ReviewStorageUnitOfWork {
+public interface ReviewStorageService {
 
     long count();
 

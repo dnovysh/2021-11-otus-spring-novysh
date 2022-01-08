@@ -1,6 +1,7 @@
 package ru.otus.core.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -29,6 +30,7 @@ public class GenreParentsView implements Serializable {
     @JoinColumn(name = "parent_id", referencedColumnName = "id")
     private GenreParentsView parent;
 
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     @Transient
     private GenreParentsView child;
 

@@ -91,25 +91,6 @@ public class Book {
         this.publishedDate = publishedDate;
     }
 
-    public Book(Integer id, String title, Integer totalPages, BigDecimal rating,
-                String isbn, Date publishedDate) {
-        this.id = id;
-        this.title = title;
-        this.totalPages = totalPages;
-        this.rating = rating;
-        this.isbn = isbn;
-        this.publishedDate = publishedDate;
-    }
-
-    public void setUpdatableFields(String title, Integer totalPages, BigDecimal rating,
-                                   String isbn, Date publishedDate) {
-        this.title = title;
-        this.totalPages = totalPages;
-        this.rating = rating;
-        this.isbn = isbn;
-        this.publishedDate = publishedDate;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

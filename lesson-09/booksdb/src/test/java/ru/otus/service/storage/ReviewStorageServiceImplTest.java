@@ -1,4 +1,4 @@
-package ru.otus.uow;
+package ru.otus.service.storage;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -9,6 +9,7 @@ import org.springframework.context.annotation.Import;
 import ru.otus.core.dto.ReviewUpdateDto;
 import ru.otus.core.entity.Review;
 import ru.otus.repository.ReviewEmRepository;
+import ru.otus.service.storage.ReviewStorageServiceImpl;
 
 import java.math.BigDecimal;
 import java.sql.Date;
@@ -16,10 +17,10 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@DisplayName("Unit of work for operations with reviews should")
+@DisplayName("Service for operations with reviews should")
 @DataJpaTest
-@Import({ReviewStorageUnitOfWorkImpl.class, ReviewEmRepository.class})
-class ReviewStorageUnitOfWorkImplTest {
+@Import({ReviewStorageServiceImpl.class, ReviewEmRepository.class})
+class ReviewStorageServiceImplTest {
     private static final int EXPECTED_REVIEWS_COUNT = 3;
     private static final int NON_EXISTENT_REVIEW_ID = 50;
     private static final List<Review> ALL_EXISTING_REVIEWS =
@@ -43,7 +44,7 @@ class ReviewStorageUnitOfWorkImplTest {
     private TestEntityManager em;
 
     @Autowired
-    private ReviewStorageUnitOfWorkImpl reviewStorage;
+    private ReviewStorageServiceImpl reviewStorage;
 
     @DisplayName("return expected count of reviews")
     @Test

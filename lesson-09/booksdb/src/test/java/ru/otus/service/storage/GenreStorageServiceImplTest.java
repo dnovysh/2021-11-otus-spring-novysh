@@ -1,4 +1,4 @@
-package ru.otus.uow;
+package ru.otus.service.storage;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -11,23 +11,24 @@ import ru.otus.core.entity.Genre;
 import ru.otus.core.entity.GenreClassifierView;
 import ru.otus.core.entity.GenreParentsView;
 import ru.otus.repository.GenreEmRepository;
+import ru.otus.service.storage.GenreStorageServiceImpl;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@DisplayName("Unit of work for operations with genres should")
+@DisplayName("Service for operations with genres should")
 @DataJpaTest
-@Import({GenreStorageUnitOfWorkImpl.class, GenreEmRepository.class})
-class GenreStorageUnitOfWorkImplTest {
+@Import({GenreStorageServiceImpl.class, GenreEmRepository.class})
+class GenreStorageServiceImplTest {
     private static final int EXPECTED_GENRES_COUNT = 13;
     private static final Genre EXISTING_GENRE =
-            new Genre("57.20", "Computer Science", "57");
+            new Genre("57.20", "Computer Science");
     private static final String NON_EXISTENT_GENRE_ID = "57.20.90";
 
     @Autowired
-    private GenreStorageUnitOfWorkImpl genreStorage;
+    private GenreStorageServiceImpl genreStorage;
 
     @DisplayName("return the expected count of genres")
     @Test
@@ -56,19 +57,19 @@ class GenreStorageUnitOfWorkImplTest {
     @Test
     void shouldReturnAllGenresList() {
         List<Genre> expectedGenres = List.of(
-                new Genre("08", "Artificial Intelligence", null),
-                new Genre("57", "Science", null),
-                new Genre("57.20", "Computer Science", "57"),
-                new Genre("57.20.03", "Algorithms", "57.20"),
-                new Genre("57.20.16", "Coding", "57.20"),
-                new Genre("57.20.53", "Programming", "57.20"),
-                new Genre("57.20.54", "Programming Languages", "57.20"),
-                new Genre("57.20.61", "Software", "57.20"),
-                new Genre("57.20.63", "Technical", "57.20"),
-                new Genre("57.20.21", "Computers", "57.20"),
-                new Genre("57.20.21.40", "Internet", "57.20.21"),
-                new Genre("57.20.21.37", "Hackers", "57.20.21"),
-                new Genre("57.64", "Technology", "57")
+                new Genre("08", "Artificial Intelligence"),
+                new Genre("57", "Science"),
+                new Genre("57.20", "Computer Science"),
+                new Genre("57.20.03", "Algorithms"),
+                new Genre("57.20.16", "Coding"),
+                new Genre("57.20.53", "Programming"),
+                new Genre("57.20.54", "Programming Languages"),
+                new Genre("57.20.61", "Software"),
+                new Genre("57.20.63", "Technical"),
+                new Genre("57.20.21", "Computers"),
+                new Genre("57.20.21.40", "Internet"),
+                new Genre("57.20.21.37", "Hackers"),
+                new Genre("57.64", "Technology")
         );
         List<Genre> actualGenres = genreStorage.findAll();
         assertThat(actualGenres).hasSameElementsAs(expectedGenres);
@@ -77,9 +78,9 @@ class GenreStorageUnitOfWorkImplTest {
     @DisplayName("return the entire genre hierarchy starting at the given id")
     @Test
     void shouldReturnEntireGenreHierarchyStartWithId() {
-        var genre57 = new Genre("57", "Science", null);
-        var genre5720 = new Genre("57.20", "Computer Science", "57");
-        var genre572021 = new Genre("57.20.21", "Computers", "57.20");
+        var genre57 = new Genre("57", "Science");
+        var genre5720 = new Genre("57.20", "Computer Science");
+        var genre572021 = new Genre("57.20.21", "Computers");
         var emptyList = new ArrayList<GenreClassifierView>();
         var expectedGenre = new GenreClassifierView("57.20", "Computer Science", genre57,
                 List.of(
@@ -114,9 +115,9 @@ class GenreStorageUnitOfWorkImplTest {
     @DisplayName("return the entire genre hierarchy")
     @Test
     void shouldReturnEntireGenreHierarchyStartWithRoot() {
-        var genre57 = new Genre("57", "Science", null);
-        var genre5720 = new Genre("57.20", "Computer Science", "57");
-        var genre572021 = new Genre("57.20.21", "Computers", "57.20");
+        var genre57 = new Genre("57", "Science");
+        var genre5720 = new Genre("57.20", "Computer Science");
+        var genre572021 = new Genre("57.20.21", "Computers");
         var emptyList = new ArrayList<GenreClassifierView>();
         var expectedGenres = List.of(
                 new GenreClassifierView("08", "Artificial Intelligence", null, emptyList),
@@ -148,7 +149,7 @@ class GenreStorageUnitOfWorkImplTest {
     @DisplayName("return the path by id")
     @Test
     void shouldReturnPathById() {
-        var genre57 = new GenreParentsView("57", "Science", null , null);
+        var genre57 = new GenreParentsView("57", "Science", null, null);
         var genre5720 = new GenreParentsView("57.20", "Computer Science", genre57, null);
         var genre572021 = new GenreParentsView("57.20.21", "Computers", genre5720, null);
         genre57.setChild(genre5720);

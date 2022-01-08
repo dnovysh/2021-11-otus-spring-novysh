@@ -7,7 +7,7 @@ import ru.otus.core.entity.Book;
 import java.util.List;
 import java.util.Optional;
 
-public interface BookStorageUnitOfWork {
+public interface BookStorageService {
 
     long count();
 

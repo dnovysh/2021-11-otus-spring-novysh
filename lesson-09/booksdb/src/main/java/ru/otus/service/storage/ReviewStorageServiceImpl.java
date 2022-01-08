@@ -1,8 +1,8 @@
-package ru.otus.uow;
+package ru.otus.service.storage;
 
-import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.otus.core.abstraction.ReviewStorageUnitOfWork;
+import ru.otus.core.abstraction.ReviewStorageService;
 import ru.otus.core.dto.ReviewUpdateDto;
 import ru.otus.core.entity.Review;
 import ru.otus.repository.ReviewRepository;
@@ -12,40 +12,35 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
-@Repository
-public class ReviewStorageUnitOfWorkImpl implements ReviewStorageUnitOfWork {
+@Service
+public class ReviewStorageServiceImpl implements ReviewStorageService {
 
     private final ReviewRepository reviewRepository;
 
-    public ReviewStorageUnitOfWorkImpl(ReviewRepository reviewRepository) {
+    public ReviewStorageServiceImpl(ReviewRepository reviewRepository) {
         this.reviewRepository = reviewRepository;
     }
 
-    @Transactional(readOnly = true)
     @Override
     public long count() {
         return reviewRepository.count();
     }
 
-    @Transactional(readOnly = true)
     @Override
     public Optional<Review> findById(Integer id) {
         return reviewRepository.findById(id);
     }
 
-    @Transactional(readOnly = true)
     @Override
     public List<Review> findAll() {
         return reviewRepository.findAll();
     }
 
-    @Transactional(readOnly = true)
     @Override
     public List<Review> findAllByBookId(Integer bookId) {
         return reviewRepository.findAllByBookId(bookId);
     }
 
-    @Transactional
     @Override
     public Review create(Review review) {
         if (review == null) {
@@ -79,7 +74,6 @@ public class ReviewStorageUnitOfWorkImpl implements ReviewStorageUnitOfWork {
         return optionalReview.map(reviewUpdateDto::applyToReview).get();
     }
 
-    @Transactional
     @Override
     public void deleteById(Integer id) {
         reviewRepository.deleteById(id);

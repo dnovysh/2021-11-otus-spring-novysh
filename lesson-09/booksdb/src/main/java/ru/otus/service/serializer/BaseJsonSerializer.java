@@ -1,4 +1,4 @@
-package ru.otus.service;
+package ru.otus.service.serializer;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.util.DefaultIndenter;

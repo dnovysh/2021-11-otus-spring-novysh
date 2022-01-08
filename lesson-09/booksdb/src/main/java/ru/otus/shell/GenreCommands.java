@@ -5,7 +5,7 @@ import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
 import org.springframework.shell.standard.ShellOption;
 import ru.otus.core.abstraction.BaseSerializer;
-import ru.otus.core.abstraction.GenreStorageUnitOfWork;
+import ru.otus.core.abstraction.GenreStorageService;
 import ru.otus.core.abstraction.SerializerFactory;
 import ru.otus.core.entity.Genre;
 import ru.otus.core.entity.GenreClassifierView;
@@ -17,14 +17,14 @@ import java.util.Optional;
 @ShellComponent
 @ShellCommandGroup("Genre Commands")
 public class GenreCommands {
-    private final GenreStorageUnitOfWork genreStorage;
+    private final GenreStorageService genreStorage;
     private final BaseSerializer<Genre> genreSerializer;
     private final BaseSerializer<List<Genre>> genreListSerializer;
     private final BaseSerializer<GenreClassifierView> genreClassifierSerializer;
     private final BaseSerializer<List<GenreClassifierView>> genreClassifierListSerializer;
     private final BaseSerializer<GenreParentsView> genreParentsViewSerializer;
 
-    public GenreCommands(GenreStorageUnitOfWork genreStorage,
+    public GenreCommands(GenreStorageService genreStorage,
                          SerializerFactory<Genre> genreSerializerFactory,
                          SerializerFactory<List<Genre>> genreListSerializerFactory,
                          SerializerFactory<GenreClassifierView> genreClassifierSerializerFactory,

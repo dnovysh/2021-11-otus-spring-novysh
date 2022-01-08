@@ -5,7 +5,7 @@ import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
 import org.springframework.shell.standard.ShellOption;
 import ru.otus.core.abstraction.BaseSerializer;
-import ru.otus.core.abstraction.ReviewStorageUnitOfWork;
+import ru.otus.core.abstraction.ReviewStorageService;
 import ru.otus.core.abstraction.SerializerFactory;
 import ru.otus.core.dto.ReviewUpdateDto;
 import ru.otus.core.entity.Review;
@@ -19,11 +19,11 @@ import java.util.List;
 @ShellComponent
 @ShellCommandGroup("Review Commands")
 public class ReviewCommands {
-    private final ReviewStorageUnitOfWork reviewStorage;
+    private final ReviewStorageService reviewStorage;
     private final BaseSerializer<Review> reviewSerializer;
     private final BaseSerializer<List<Review>> reviewListSerializer;
 
-    public ReviewCommands(ReviewStorageUnitOfWork reviewStorage,
+    public ReviewCommands(ReviewStorageService reviewStorage,
                           SerializerFactory<Review> reviewSerializerFactory,
                           SerializerFactory<List<Review>> reviewListSerializerFactory) {
         this.reviewStorage = reviewStorage;

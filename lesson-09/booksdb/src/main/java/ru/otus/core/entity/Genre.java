@@ -28,9 +28,6 @@ public class Genre {
     @Column(name = "name", nullable = false)
     protected String name;
 
-    @Column(name = "parent_id")
-    protected String parentId;
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

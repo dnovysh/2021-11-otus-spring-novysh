@@ -1,6 +1,7 @@
 package ru.otus.repository;
 
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 import ru.otus.core.entity.Review;
 
 import javax.persistence.EntityManager;
@@ -19,6 +20,7 @@ public class ReviewEmRepository implements ReviewRepository {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public long count() {
         return em.createQuery("select count(r) FROM Review r", Long.class).getSingleResult();
     }
@@ -29,11 +31,13 @@ public class ReviewEmRepository implements ReviewRepository {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<Review> findAll() {
         return em.createQuery("select r from Review r", Review.class).getResultList();
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<Review> findAllByBookId(Integer bookId) {
         return em.createQuery(
                         "select r from Review r where r.bookId=:bookId order by r.reviewDate, r.id",
@@ -43,6 +47,7 @@ public class ReviewEmRepository implements ReviewRepository {
     }
 
     @Override
+    @Transactional()
     public Review save(Review review) {
         if (review.getId() == null) {
             em.persist(review);
@@ -54,6 +59,7 @@ public class ReviewEmRepository implements ReviewRepository {
     }
 
     @Override
+    @Transactional()
     public void deleteById(Integer id) {
         findById(id).ifPresent((review) -> {
             review.setDeleted(true);

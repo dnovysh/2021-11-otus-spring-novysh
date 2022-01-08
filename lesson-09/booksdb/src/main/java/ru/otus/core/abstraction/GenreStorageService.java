@@ -7,7 +7,7 @@ import ru.otus.core.entity.GenreParentsView;
 import java.util.List;
 import java.util.Optional;
 
-public interface GenreStorageUnitOfWork {
+public interface GenreStorageService {
 
     long count();
 

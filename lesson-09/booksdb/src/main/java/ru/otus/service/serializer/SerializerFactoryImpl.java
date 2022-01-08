@@ -1,4 +1,4 @@
-package ru.otus.service;
+package ru.otus.service.serializer;
 
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import org.springframework.stereotype.Service;

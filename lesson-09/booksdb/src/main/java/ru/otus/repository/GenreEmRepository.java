@@ -1,6 +1,7 @@
 package ru.otus.repository;
 
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 import ru.otus.core.entity.Genre;
 import ru.otus.core.entity.GenreClassifierView;
 import ru.otus.core.entity.GenreParentsView;
@@ -21,6 +22,7 @@ public class GenreEmRepository implements GenreRepository {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public long count() {
         return em.createQuery("select count(g) FROM Genre g", Long.class).getSingleResult();
     }
@@ -31,6 +33,7 @@ public class GenreEmRepository implements GenreRepository {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<Genre> findAll() {
         return em.createQuery("select g from Genre g", Genre.class).getResultList();
     }
@@ -41,6 +44,7 @@ public class GenreEmRepository implements GenreRepository {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<GenreClassifierView> getAllGenreClassifier() {
         return em.createQuery(
                 "select g from GenreClassifierView g where g.parent is null order by g.id",

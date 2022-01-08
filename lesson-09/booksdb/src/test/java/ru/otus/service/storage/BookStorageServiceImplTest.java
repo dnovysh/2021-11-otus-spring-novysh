@@ -1,4 +1,4 @@
-package ru.otus.uow;
+package ru.otus.service.storage;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -17,6 +17,9 @@ import ru.otus.core.entity.Review;
 import ru.otus.repository.AuthorEmRepository;
 import ru.otus.repository.BookEmRepository;
 import ru.otus.repository.GenreEmRepository;
+import ru.otus.service.storage.AuthorStorageServiceImpl;
+import ru.otus.service.storage.BookStorageServiceImpl;
+import ru.otus.service.storage.GenreStorageServiceImpl;
 
 import java.math.BigDecimal;
 import java.sql.Date;
@@ -29,16 +32,17 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@DisplayName("Unit of work for operations with books should")
+@DisplayName("Service for operations with books should")
 @DataJpaTest
-@Import({BookStorageUnitOfWorkImpl.class,
+@Import({BookStorageServiceImpl.class,
         BookEmRepository.class,
         AuthorEmRepository.class,
         GenreEmRepository.class,
-        AuthorStorageUnitOfWorkImpl.class,
-        GenreStorageUnitOfWorkImpl.class})
-class BookStorageUnitOfWorkImplTest {
+        AuthorStorageServiceImpl.class,
+        GenreStorageServiceImpl.class})
+class BookStorageServiceImplTest {
     private static final int EXPECTED_BOOKS_COUNT = 3;
+    private static final int NON_EXISTENT_BOOK_ID = 100;
     private static final List<Review> EXISTING_BOOK_REVIEWS =
             List.of(
                     new Review(103, 529, "THE Kotlin book", null,
@@ -63,10 +67,10 @@ class BookStorageUnitOfWorkImplTest {
                             new Author(333, "Svetlana", null, "Isakova")
                     ),
                     Set.of(
-                            new Genre("57.20.54", "Programming Languages", "57.20"),
-                            new Genre("57.20.61", "Software", "57.20"),
-                            new Genre("57.20.63", "Technical", "57.20"),
-                            new Genre("57.64", "Technology", "57")
+                            new Genre("57.20.54", "Programming Languages"),
+                            new Genre("57.20.61", "Software"),
+                            new Genre("57.20.63", "Technical"),
+                            new Genre("57.64", "Technology")
                     ),
                     EXISTING_BOOK_REVIEWS
             );
@@ -80,8 +84,8 @@ class BookStorageUnitOfWorkImplTest {
                             new Author(987, "William", "M.", "Ramsey")
                     ),
                     Set.of(
-                            new Genre("08", "Artificial Intelligence", null),
-                            new Genre("57.64", "Technology", "57")
+                            new Genre("08", "Artificial Intelligence"),
+                            new Genre("57.64", "Technology")
                     ), new ArrayList<>()),
             EXISTING_BOOK,
             new Book(757, "Java Performance: The Definitive Guide", 500,
@@ -91,20 +95,18 @@ class BookStorageUnitOfWorkImplTest {
                             new Author(1042, "Scott", null, "Oaks")
                     ),
                     Set.of(
-                            new Genre("57.20.53", "Programming", "57.20"),
-                            new Genre("57.20.61", "Software", "57.20"),
-                            new Genre("57.20.63", "Technical", "57.20"),
-                            new Genre("57.64", "Technology", "57")
+                            new Genre("57.20.53", "Programming"),
+                            new Genre("57.20.61", "Software"),
+                            new Genre("57.20.63", "Technical"),
+                            new Genre("57.64", "Technology")
                     ), new ArrayList<>())
     );
-
-    private static final int NON_EXISTENT_BOOK_ID = 100;
 
     @Autowired
     private TestEntityManager em;
 
     @Autowired
-    private BookStorageUnitOfWorkImpl bookStorage;
+    private BookStorageServiceImpl bookStorage;
 
     @DisplayName("return the expected count of books")
     @Test
@@ -246,6 +248,7 @@ class BookStorageUnitOfWorkImplTest {
         assertThat(actualBook.getAuthors().size()).isEqualTo(4);
         assertThat(actualBook.getGenres().size()).isEqualTo(2);
         assertThat(actualBook.getReviews().size()).isZero();
+        em.detach(actualBook);
         assertThat(actualBook).isNotSameAs(updatedBook);
         assertThat(updatedBook)
                 .usingRecursiveComparison()

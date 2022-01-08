@@ -4,7 +4,7 @@ import org.springframework.shell.standard.ShellCommandGroup;
 import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
 import org.springframework.shell.standard.ShellOption;
-import ru.otus.core.abstraction.AuthorStorageUnitOfWork;
+import ru.otus.core.abstraction.AuthorStorageService;
 import ru.otus.core.abstraction.BaseSerializer;
 import ru.otus.core.abstraction.SerializerFactory;
 import ru.otus.core.entity.Author;
@@ -14,11 +14,11 @@ import java.util.List;
 @ShellComponent
 @ShellCommandGroup("Author Commands")
 public class AuthorCommands {
-    private final AuthorStorageUnitOfWork authorStorage;
+    private final AuthorStorageService authorStorage;
     private final BaseSerializer<Author> authorSerializer;
     private final BaseSerializer<List<Author>> authorListSerializer;
 
-    public AuthorCommands(AuthorStorageUnitOfWork authorStorage,
+    public AuthorCommands(AuthorStorageService authorStorage,
                           SerializerFactory<Author> authorSerializerFactory,
                           SerializerFactory<List<Author>> authorsSerializerFactory) {
         this.authorStorage = authorStorage;

@@ -13,8 +13,4 @@ public record BookUpdateDto(
         String isbn,
         Date publishedDate
 ) {
-    public Book applyToBook(Book book) {
-        book.setUpdatableFields(title, totalPages, rating, isbn, publishedDate);
-        return book;
-    }
 }

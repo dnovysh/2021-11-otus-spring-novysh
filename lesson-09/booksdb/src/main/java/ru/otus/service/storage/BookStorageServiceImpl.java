@@ -1,12 +1,12 @@
-package ru.otus.uow;
+package ru.otus.service.storage;
 
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.DuplicateKeyException;
-import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.otus.core.abstraction.AuthorStorageUnitOfWork;
-import ru.otus.core.abstraction.BookStorageUnitOfWork;
-import ru.otus.core.abstraction.GenreStorageUnitOfWork;
+import ru.otus.core.abstraction.AuthorStorageService;
+import ru.otus.core.abstraction.BookStorageService;
+import ru.otus.core.abstraction.GenreStorageService;
 import ru.otus.core.dto.BookReviewsViewDto;
 import ru.otus.core.dto.BookUpdateDto;
 import ru.otus.core.entity.Author;
@@ -18,40 +18,36 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-@Repository
-public class BookStorageUnitOfWorkImpl implements BookStorageUnitOfWork {
+@Service
+public class BookStorageServiceImpl implements BookStorageService {
 
     private final BookRepository bookRepository;
-    private final AuthorStorageUnitOfWork authorStorage;
-    private final GenreStorageUnitOfWork genreStorage;
+    private final AuthorStorageService authorStorage;
+    private final GenreStorageService genreStorage;
 
-    public BookStorageUnitOfWorkImpl(BookRepository bookRepository,
-                                     AuthorStorageUnitOfWork authorStorage,
-                                     GenreStorageUnitOfWork genreStorage) {
+    public BookStorageServiceImpl(BookRepository bookRepository,
+                                  AuthorStorageService authorStorage,
+                                  GenreStorageService genreStorage) {
         this.bookRepository = bookRepository;
         this.authorStorage = authorStorage;
         this.genreStorage = genreStorage;
     }
 
-    @Transactional(readOnly = true)
     @Override
     public long count() {
         return bookRepository.count();
     }
 
-    @Transactional(readOnly = true)
     @Override
     public Optional<Book> findById(Integer id) {
         return bookRepository.findById(id);
     }
 
-    @Transactional(readOnly = true)
     @Override
     public List<Book> findAll() {
         return bookRepository.findAll();
     }
 
-    @Transactional(readOnly = true)
     @Override
     public Optional<BookReviewsViewDto> findBookReviewsById(Integer id) {
         return bookRepository.findById(id).map((b) -> {
@@ -63,7 +59,6 @@ public class BookStorageUnitOfWorkImpl implements BookStorageUnitOfWork {
         });
     }
 
-    @Transactional
     @Override
     public Book create(Book book) {
         if (book == null) {
@@ -94,10 +89,15 @@ public class BookStorageUnitOfWorkImpl implements BookStorageUnitOfWork {
         if (optionalBook.isEmpty()) {
             return null;
         }
-        return optionalBook.map(bookUpdateDto::applyToBook).get();
+        var book = optionalBook.get();
+        book.setTitle(bookUpdateDto.title());
+        book.setTotalPages(bookUpdateDto.totalPages());
+        book.setRating(bookUpdateDto.rating());
+        book.setIsbn(bookUpdateDto.isbn());
+        book.setPublishedDate(bookUpdateDto.publishedDate());
+        return book;
     }
 
-    @Transactional
     @Override
     public void deleteById(Integer id) {
         bookRepository.deleteById(id);

@@ -1,6 +1,7 @@
 package ru.otus.repository;
 
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 import ru.otus.core.entity.Author;
 
 import javax.persistence.EntityManager;
@@ -19,6 +20,7 @@ public class AuthorEmRepository implements AuthorRepository {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public long count() {
         return em.createQuery("select count(a) FROM Author a", Long.class).getSingleResult();
     }
@@ -29,6 +31,7 @@ public class AuthorEmRepository implements AuthorRepository {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<Author> findAll() {
         return em.createQuery("select a from Author a", Author.class).getResultList();
     }

@@ -1,6 +1,7 @@
 package ru.otus.repository;
 
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 import ru.otus.core.entity.Book;
 
 import javax.persistence.EntityManager;
@@ -19,6 +20,7 @@ public class BookEmRepository implements BookRepository {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public long count() {
         return em.createQuery("select count(b) FROM Book b", Long.class).getSingleResult();
     }
@@ -29,11 +31,13 @@ public class BookEmRepository implements BookRepository {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<Book> findAll() {
         return em.createQuery("select b from Book b", Book.class).getResultList();
     }
 
     @Override
+    @Transactional()
     public Book save(Book book) {
         if (book.getId() == null) {
             em.persist(book);
@@ -45,6 +49,7 @@ public class BookEmRepository implements BookRepository {
     }
 
     @Override
+    @Transactional()
     public void deleteById(Integer id) {
         findById(id).ifPresent(em::remove);
     }

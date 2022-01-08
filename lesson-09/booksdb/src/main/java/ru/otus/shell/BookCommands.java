@@ -6,7 +6,7 @@ import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
 import org.springframework.shell.standard.ShellOption;
 import ru.otus.core.abstraction.BaseSerializer;
-import ru.otus.core.abstraction.BookStorageUnitOfWork;
+import ru.otus.core.abstraction.BookStorageService;
 import ru.otus.core.abstraction.SerializerFactory;
 import ru.otus.core.dto.BookReviewsViewDto;
 import ru.otus.core.dto.BookUpdateDto;
@@ -24,12 +24,12 @@ import java.util.Optional;
 @ShellComponent
 @ShellCommandGroup("Book Commands")
 public class BookCommands {
-    private final BookStorageUnitOfWork bookStorage;
+    private final BookStorageService bookStorage;
     private final BaseSerializer<Book> bookSerializer;
     private final BaseSerializer<List<Book>> bookListSerializer;
     private final BaseSerializer<BookReviewsViewDto> bookReviewsSerializer;
 
-    public BookCommands(BookStorageUnitOfWork bookStorage,
+    public BookCommands(BookStorageService bookStorage,
                         SerializerFactory<Book> bookSerializerFactory,
                         SerializerFactory<List<Book>> booksSerializerFactory,
                         SerializerFactory<BookReviewsViewDto> bookReviewsSerializerFactory) {
