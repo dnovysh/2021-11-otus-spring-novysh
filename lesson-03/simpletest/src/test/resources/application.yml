@@ -1,0 +1,56 @@
+spring:
+  config:
+    activate:
+      on-profile: test-csv-loader-positive
+exam:
+  csv-loader:
+    file-name: /data/simple-tenses-test-items.csv
+    separator: '|'
+
+---
+
+spring:
+  config:
+    activate:
+      on-profile: test-csv-loader-negative
+exam:
+  csv-loader:
+    file-name: /data/not-existing-file.csv
+    separator: '|'
+
+---
+
+spring:
+  config:
+    activate:
+      on-profile: exam-integration-test
+exam:
+  header-loader:
+    file-name: /data/simple-tenses-test-header.json
+  csv-loader:
+    file-name: /data/simple-tenses-test-items.csv
+    separator: '|'
+
+---
+
+spring:
+  config:
+    activate:
+      on-profile: examination-service-integration-test
+  messages:
+    encoding: UTF-8
+    fallback-to-system-locale: false
+  jackson:
+    property-naming-strategy: LOWER_CAMEL_CASE
+    serialization:
+      indent-output: true
+
+application:
+  locale: en
+
+exam:
+  header-loader:
+    file-name: /data/simple-tenses-test-header.json
+  csv-loader:
+    file-name: /data/simple-tenses-test-items.csv
+    separator: '|'

@@ -1,0 +1,50 @@
+
+
+Simple tenses test
+
+Minimum percentage of correct answers: 80%
+
+Please enter your
+  first name:   last name: 
+
+Sharon ____________ to San Fransisco last month.
+
+1 moves
+2 move
+3 moved
+
+Enter the number of the correct answer (-1 to end the test immediately): 
+
+We ____________ out tonight.
+
+1 won’t go
+2 not will go
+3 doesn’t go
+
+Enter the number of the correct answer (-1 to end the test immediately): 
+
+Where ____________ you born?
+
+1 was
+2 did
+3 were
+
+Enter the number of the correct answer (-1 to end the test immediately): Enter the number of the correct answer (-1 to end the test immediately): 
+
+Jake ______________ enjoy hiking at all.
+
+1 do
+2 doesn’t
+3 don’t
+
+Enter the number of the correct answer (-1 to end the test immediately): 
+
+They ____________ to the seaside last year.
+
+1 didn’t go
+2 weren’t go
+3 didn’t went
+
+Enter the number of the correct answer (-1 to end the test immediately): 
+Foo Bar, you answered 100% of the questions correctly
+Tremendous! Test passed! Good job!

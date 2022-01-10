@@ -1,0 +1,6 @@
+{
+  "title": "  *** Тест на времена группы Simple ***  ",
+  "minPercentageOfCorrectAnswersLabel": "Минимально необходимый для прохождения теста процент правильных ответов",
+  "minPercentageOfCorrectAnswers": 70,
+  "rightAnswerToken": "[ правильный ответ ]"
+}
