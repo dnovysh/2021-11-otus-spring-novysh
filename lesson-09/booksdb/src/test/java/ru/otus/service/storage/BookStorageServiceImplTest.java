@@ -8,6 +8,8 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.context.annotation.Import;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.DuplicateKeyException;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import ru.otus.core.dto.BookReviewsViewDto;
 import ru.otus.core.dto.BookUpdateDto;
 import ru.otus.core.entity.Author;
@@ -17,18 +19,15 @@ import ru.otus.core.entity.Review;
 import ru.otus.repository.AuthorEmRepository;
 import ru.otus.repository.BookEmRepository;
 import ru.otus.repository.GenreEmRepository;
-import ru.otus.service.storage.AuthorStorageServiceImpl;
-import ru.otus.service.storage.BookStorageServiceImpl;
-import ru.otus.service.storage.GenreStorageServiceImpl;
 
 import java.math.BigDecimal;
 import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -144,6 +143,7 @@ class BookStorageServiceImplTest {
 
     @DisplayName("return short book info with reviews by book id")
     @Test
+    @Transactional(propagation = Propagation.NOT_SUPPORTED)
     void shouldReturnBookReviewsByBookId() {
         var expectedBookReviewsViewDto = new BookReviewsViewDto(
                 EXISTING_BOOK.getId(),
@@ -151,8 +151,13 @@ class BookStorageServiceImplTest {
                 EXISTING_BOOK.getPublishedDate(),
                 EXISTING_BOOK.getReviews()
         );
+
+        assertThatCode(() -> bookStorage.findBookReviewsById(EXISTING_BOOK.getId()))
+                .doesNotThrowAnyException();
+
         var actualBookReviewsViewDto =
                 bookStorage.findBookReviewsById(EXISTING_BOOK.getId());
+
         assertThat(actualBookReviewsViewDto)
                 .isNotEmpty().get()
                 .usingRecursiveComparison()

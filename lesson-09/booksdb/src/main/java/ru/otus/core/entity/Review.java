@@ -57,12 +57,6 @@ public class Review {
         this.rating = rating;
     }
 
-    public void setUpdatableFields(String title, String text, BigDecimal rating){
-        this.title = title;
-        this.text = text;
-        this.rating = rating;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

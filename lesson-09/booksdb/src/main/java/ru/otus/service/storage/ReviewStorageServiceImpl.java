@@ -71,7 +71,11 @@ public class ReviewStorageServiceImpl implements ReviewStorageService {
         if (optionalReview.isEmpty()) {
             return null;
         }
-        return optionalReview.map(reviewUpdateDto::applyToReview).get();
+        var review = optionalReview.get();
+        review.setTitle(reviewUpdateDto.title());
+        review.setText(reviewUpdateDto.text());
+        review.setRating(reviewUpdateDto.rating());
+        return review;
     }
 
     @Override

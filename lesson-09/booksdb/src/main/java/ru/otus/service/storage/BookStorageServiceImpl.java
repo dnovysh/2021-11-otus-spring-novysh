@@ -48,6 +48,7 @@ public class BookStorageServiceImpl implements BookStorageService {
         return bookRepository.findAll();
     }
 
+    @Transactional(readOnly = true)
     @Override
     public Optional<BookReviewsViewDto> findBookReviewsById(Integer id) {
         return bookRepository.findById(id).map((b) -> {
