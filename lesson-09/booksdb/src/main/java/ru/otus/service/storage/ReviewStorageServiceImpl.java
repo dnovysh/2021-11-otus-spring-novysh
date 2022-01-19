@@ -4,6 +4,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.otus.core.abstraction.ReviewStorageService;
 import ru.otus.core.dto.ReviewUpdateDto;
+import ru.otus.core.entity.BookId;
 import ru.otus.core.entity.Review;
 import ru.otus.repository.ReviewRepository;
 
@@ -39,6 +40,11 @@ public class ReviewStorageServiceImpl implements ReviewStorageService {
     @Override
     public List<Review> findAllByBookId(Integer bookId) {
         return reviewRepository.findAllByBookId(bookId);
+    }
+
+    @Override
+    public List<Review> findAllByBookId(BookId bookId) {
+        return this.findAllByBookId(bookId.getId());
     }
 
     @Override

@@ -1,6 +1,7 @@
 package ru.otus.core.abstraction;
 
 import ru.otus.core.dto.ReviewUpdateDto;
+import ru.otus.core.entity.BookId;
 import ru.otus.core.entity.Review;
 
 import java.util.List;
@@ -15,6 +16,8 @@ public interface ReviewStorageService {
     List<Review> findAll();
 
     List<Review> findAllByBookId(Integer bookId);
+
+    List<Review> findAllByBookId(BookId bookId);
 
     Review create(Review review);
 

@@ -8,6 +8,7 @@ import ru.otus.core.abstraction.BaseSerializer;
 import ru.otus.core.abstraction.ReviewStorageService;
 import ru.otus.core.abstraction.SerializerFactory;
 import ru.otus.core.dto.ReviewUpdateDto;
+import ru.otus.core.entity.BookId;
 import ru.otus.core.entity.Review;
 
 import javax.validation.constraints.DecimalMax;
@@ -77,7 +78,8 @@ public class ReviewCommands {
             @DecimalMax(value = "5.0")
                     BigDecimal rating
     ) {
-        Review insertedReview = reviewStorage.create(new Review(bookId, title, text, rating));
+        Review insertedReview = reviewStorage
+                .create(new Review(new BookId(bookId), title, text, rating));
         System.out.println("Review successfully added:");
         System.out.println(reviewSerializer.serialize(insertedReview));
     }

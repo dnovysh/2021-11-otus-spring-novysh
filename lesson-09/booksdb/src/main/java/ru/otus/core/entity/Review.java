@@ -1,7 +1,10 @@
 package ru.otus.core.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 
 import javax.persistence.*;
 import javax.validation.constraints.DecimalMax;
@@ -17,6 +20,8 @@ import java.util.Objects;
 @Getter
 @Setter
 @Builder
+@NamedEntityGraph(name = "Review-bookId",
+        attributeNodes = @NamedAttributeNode("bookId"))
 @Entity
 @Table(name = "review")
 public class Review {
@@ -25,8 +30,13 @@ public class Review {
     @Column(name = "id", nullable = false)
     private Integer id;
 
-    @Column(name = "book_id", nullable = false)
-    private Integer bookId;
+    @JsonIgnore
+    @ManyToOne()
+    @Fetch(value = FetchMode.JOIN)
+    @JoinColumn(name = "book_id", referencedColumnName = "id",
+            foreignKey = @ForeignKey(name = "fk_book_review"),
+            nullable = false)
+    private BookId bookId;
 
     @NotBlank
     @Size(min = 1, max = 100)
@@ -50,7 +60,7 @@ public class Review {
     @Column(name = "deleted", nullable = false)
     private boolean deleted;
 
-    public Review(Integer bookId, String title, String text, BigDecimal rating) {
+    public Review(BookId bookId, String title, String text, BigDecimal rating) {
         this.bookId = bookId;
         this.title = title;
         this.text = text;

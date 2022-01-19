@@ -7,6 +7,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.context.annotation.Import;
 import ru.otus.core.dto.ReviewUpdateDto;
+import ru.otus.core.entity.BookId;
 import ru.otus.core.entity.Review;
 import ru.otus.repository.ReviewEmRepository;
 import ru.otus.service.storage.ReviewStorageServiceImpl;
@@ -25,15 +26,16 @@ class ReviewStorageServiceImplTest {
     private static final int NON_EXISTENT_REVIEW_ID = 50;
     private static final List<Review> ALL_EXISTING_REVIEWS =
             List.of(
-                    new Review(103, 529, "THE Kotlin book", null,
+                    new Review(103, new BookId(529),
+                            "THE Kotlin book", null,
                             BigDecimal.valueOf(500, 2),
                             Date.valueOf("2018-08-01"), false),
-                    new Review(265, 529,
+                    new Review(265, new BookId(529),
                             "Great introduction to Kotlin",
                             "We started using Kotlin in 2019 and I used this book to introduce the team to it...",
                             BigDecimal.valueOf(500, 2),
                             Date.valueOf("2020-12-28"), false),
-                    new Review(230, 529,
+                    new Review(230, new BookId(529),
                             "Awesome reference",
                             "I really love this book, and expect to be referring back to it for many years to come.",
                             BigDecimal.valueOf(500, 2),
@@ -85,7 +87,7 @@ class ReviewStorageServiceImplTest {
     @DisplayName("return a list of all reviews by book id")
     @Test
     void shouldReturnAllReviewsByBookId() {
-        var bookId = 757;
+        var bookId = em.find(BookId.class, 757);
         var expectedReviews = List.of(
                 Review.builder().bookId(bookId).title("Foo")
                         .reviewDate(Date.valueOf("2021-08-21")).build(),
@@ -105,8 +107,9 @@ class ReviewStorageServiceImplTest {
     @DisplayName("insert review correctly")
     @Test
     void shouldInsertReviewCorrectly() {
+        final var bookId = em.find(BookId.class, 529);
         var title = "Best Book For Kotlin Developer";
-        var newReview = new Review(529, title,
+        var newReview = new Review(bookId, title,
                 "Best book for learning kotlin from the basic to advance.",
                 BigDecimal.valueOf(500, 2));
         assertThat(em.getEntityManager()

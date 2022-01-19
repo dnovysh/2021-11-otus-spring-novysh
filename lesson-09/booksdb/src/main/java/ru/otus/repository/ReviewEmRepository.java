@@ -2,8 +2,10 @@ package ru.otus.repository;
 
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
+import ru.otus.core.entity.BookId;
 import ru.otus.core.entity.Review;
 
+import javax.persistence.EntityGraph;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.List;
@@ -33,16 +35,20 @@ public class ReviewEmRepository implements ReviewRepository {
     @Override
     @Transactional(readOnly = true)
     public List<Review> findAll() {
-        return em.createQuery("select r from Review r", Review.class).getResultList();
+        var graph = em.getEntityGraph("Review-bookId");
+        return em.createQuery("select r from Review r", Review.class)
+                .setHint("javax.persistence.loadgraph", graph)
+                .getResultList();
     }
 
     @Override
     @Transactional(readOnly = true)
     public List<Review> findAllByBookId(Integer bookId) {
+        var bookIdObj = em.find(BookId.class, bookId);
         return em.createQuery(
                         "select r from Review r where r.bookId=:bookId order by r.reviewDate, r.id",
                         Review.class)
-                .setParameter("bookId", bookId)
+                .setParameter("bookId", bookIdObj)
                 .getResultList();
     }
 

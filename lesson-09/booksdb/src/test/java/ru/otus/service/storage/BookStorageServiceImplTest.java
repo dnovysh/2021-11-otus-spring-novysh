@@ -12,10 +12,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import ru.otus.core.dto.BookReviewsViewDto;
 import ru.otus.core.dto.BookUpdateDto;
-import ru.otus.core.entity.Author;
-import ru.otus.core.entity.Book;
-import ru.otus.core.entity.Genre;
-import ru.otus.core.entity.Review;
+import ru.otus.core.entity.*;
 import ru.otus.repository.AuthorEmRepository;
 import ru.otus.repository.BookEmRepository;
 import ru.otus.repository.GenreEmRepository;
@@ -24,7 +21,6 @@ import java.math.BigDecimal;
 import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 
 import static org.assertj.core.api.Assertions.*;
@@ -44,15 +40,15 @@ class BookStorageServiceImplTest {
     private static final int NON_EXISTENT_BOOK_ID = 100;
     private static final List<Review> EXISTING_BOOK_REVIEWS =
             List.of(
-                    new Review(103, 529, "THE Kotlin book", null,
+                    new Review(103, new BookId(529), "THE Kotlin book", null,
                             BigDecimal.valueOf(500, 2),
                             Date.valueOf("2018-08-01"), false),
-                    new Review(265, 529,
+                    new Review(265, new BookId(529),
                             "Great introduction to Kotlin",
                             "We started using Kotlin in 2019 and I used this book to introduce the team to it...",
                             BigDecimal.valueOf(500, 2),
                             Date.valueOf("2020-12-28"), false),
-                    new Review(230, 529,
+                    new Review(230, new BookId(529),
                             "Awesome reference",
                             "I really love this book, and expect to be referring back to it for many years to come.",
                             BigDecimal.valueOf(500, 2),
