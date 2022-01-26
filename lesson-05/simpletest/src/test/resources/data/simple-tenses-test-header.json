@@ -1,0 +1,6 @@
+{
+  "title": "Simple tenses test",
+  "minPercentageOfCorrectAnswersLabel": "Minimum percentage of correct answers",
+  "minPercentageOfCorrectAnswers": 80,
+  "rightAnswerToken": "<<+>>"
+}
