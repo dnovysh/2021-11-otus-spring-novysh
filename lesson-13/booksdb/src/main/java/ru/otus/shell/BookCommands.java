@@ -7,6 +7,7 @@ import org.springframework.shell.standard.ShellOption;
 import ru.otus.dto.BookUpdateDto;
 import ru.otus.model.Author;
 import ru.otus.model.Book;
+import ru.otus.model.Genre;
 import ru.otus.services.serializer.BaseSerializer;
 import ru.otus.services.serializer.SerializerFactory;
 import ru.otus.services.storage.BookStorage;
@@ -95,20 +96,14 @@ public class BookCommands {
                     message = "Published date must be in ISO format: YYYY-MM-DD")
                     String publishedDate
     ) {
-        Book updatedBook = null;
-        try {
-            updatedBook = bookStorage.update(new BookUpdateDto(
+        Book updatedBook = bookStorage.update(new BookUpdateDto(
                     id, title, totalPages, isbn,
                     Optional.ofNullable(publishedDate).map(LocalDate::parse).orElse(null)));
-        } catch (RuntimeException e) {
-            System.out.println(e.getMessage());
-            return;
-        }
         if (updatedBook != null) {
             System.out.println("Updated book:");
             System.out.println(bookSerializer.serialize(updatedBook));
         } else {
-            System.out.println("Book not found");
+            System.out.println("Book not found or deleted");
         }
     }
 
@@ -142,5 +137,19 @@ public class BookCommands {
         bookStorage.removeAuthor(id, new Author(firstName, lastName));
     }
 
+    @ShellMethod(value = "add genre", key = {"b-g-add", "addGenre"})
+    public void addGenre(
+            String id,
+            String name
+    ) {
+        bookStorage.addGenre(id, new Genre(name));
+    }
 
+    @ShellMethod(value = "remove genre", key = {"b-g-remove", "removeGenre"})
+    public void removeGenre(
+            String id,
+            String name
+    ) {
+        bookStorage.removeGenre(id, new Genre(name));
+    }
 }

@@ -22,3 +22,4 @@ mongock:
 logging:
   level:
     root: ERROR
+    org.springframework.data.mongodb.core.MongoTemplate: DEBUG

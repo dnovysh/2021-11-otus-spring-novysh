@@ -4,6 +4,7 @@ import org.springframework.stereotype.Service;
 import ru.otus.dto.BookUpdateDto;
 import ru.otus.model.Author;
 import ru.otus.model.Book;
+import ru.otus.model.Genre;
 import ru.otus.repositories.BookRepository;
 
 import java.util.List;
@@ -46,8 +47,7 @@ public class BookStorageImpl implements BookStorage {
         }
         var book = optionalBook.get();
         if (book.isDeleted()) {
-            throw new RuntimeException(
-                    "Book has been deleted to change it, you must first restore the book");
+            return null;
         }
         var changedBook = Book.builder()
                 .id(book.getId())
@@ -79,5 +79,15 @@ public class BookStorageImpl implements BookStorage {
     @Override
     public void removeAuthor(String bookId, Author author) {
         bookRepository.removeAuthor(bookId, author);
+    }
+
+    @Override
+    public void addGenre(String bookId, Genre genre) {
+        bookRepository.addGenre(bookId, genre);
+    }
+
+    @Override
+    public void removeGenre(String bookId, Genre genre) {
+        bookRepository.removeGenre(bookId, genre);
     }
 }

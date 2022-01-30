@@ -6,7 +6,7 @@ import com.mongodb.client.MongoDatabase;
 import org.bson.types.ObjectId;
 import ru.otus.model.*;
 import ru.otus.repositories.BookRepository;
-import ru.otus.repositories.ReviewRepository;
+import ru.otus.repositories.BookExtRepository;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -57,19 +57,19 @@ public class InitMongoDBDataChangeLog {
     }
 
     @ChangeSet(order = "002", id = "initReviews", author = "dnovysh", runAlways = true)
-    public void initReviews(ReviewRepository repository) {
-        repository.save(new Review(
+    public void initReviews(BookExtRepository repository) {
+        repository.save(new BookExt(
                 kotlinInAction.getId(),
                 List.of(
-                        new ReviewItem(ObjectId.get(), "Great introduction to Kotlin"),
-                        new ReviewItem(ObjectId.get(), "Awesome reference"),
-                        new ReviewItem(ObjectId.get(), "THE Kotlin book")
+                        new Review(ObjectId.get().toString(), "Great introduction to Kotlin"),
+                        new Review(ObjectId.get().toString(), "Awesome reference"),
+                        new Review(ObjectId.get().toString(), "THE Kotlin book")
                 )
         ));
-        repository.save(new Review(
+        repository.save(new BookExt(
                 cryptonomicon.getId(),
                 List.of(
-                        new ReviewItem(ObjectId.get(), "Excellent book")
+                        new Review(ObjectId.get().toString(), "Excellent book")
                 )
         ));
     }
