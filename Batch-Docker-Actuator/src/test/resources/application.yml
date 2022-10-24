@@ -1,0 +1,33 @@
+app-batch:
+  data:
+    tnved-okpd2: /data/tnved_okpd2.xlsx
+
+spring:
+  datasource:
+    url: jdbc:h2:mem:test-db
+    driver-class-name: org.h2.Driver
+  jpa:
+    database: H2
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: none
+    open-in-view: true
+    properties:
+      hibernate:
+        jdbc:
+          batch_size: 100
+        cache:
+          use_second_level_cache: false
+  liquibase:
+    enabled: true
+    change-log: classpath:/db/changelog/db.changelog-root.xml
+  batch:
+    job:
+      enabled: false
+    jdbc:
+      initialize-schema: never
+      isolation-level-for-create: default
+
+management:
+  endpoints:
+    enabled-by-default: false

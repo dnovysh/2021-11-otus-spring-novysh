@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.9.xsd"
+        objectQuotingStrategy="QUOTE_ONLY_RESERVED_WORDS"
+        logicalFilePath="db/changelog/db.changelog-1.00.xml">
+
+    <changeSet id="Create table ${schema}.tnved_okpd2" author="dnovysh">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="tnved_okpd2"/>
+            </not>
+        </preConditions>
+
+        <createTable tableName="tnved_okpd2">
+            <column name="id" type="bigint" autoIncrement="false">
+                <constraints primaryKey="true" primaryKeyName="PK_tnved_okpd2_id"/>
+            </column>
+            <column name="tnved_code_six" type="varchar(6)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="okpd_kind" type="varchar(8)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="tnved_name" type="nvarchar(4000)"/>
+            <column name="okpd_name" type="nvarchar(4000)"/>
+            <column name="load_date" type="timestamp with time zone">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <addUniqueConstraint tableName="tnved_okpd2" columnNames="tnved_code_six, okpd_kind"
+                             constraintName="UN_tnved_okpd2"/>
+    </changeSet>
+</databaseChangeLog>

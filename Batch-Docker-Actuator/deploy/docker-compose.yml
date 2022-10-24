@@ -1,0 +1,42 @@
+version: '3.8'
+services:
+
+  # --------------- Common Services ---------------
+
+  #Db
+  postgres-host:
+    image: postgres:14.5-bullseye
+    container_name: batch-db
+    restart: always
+    ports:
+      - 35101:5432
+    environment:
+      - POSTGRES_DB=batchdb
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=batch
+      - PGDATA=/var/lib/postgresql/data
+    volumes:
+      - batch-db-data:/var/lib/postgresql/data
+
+  # --------------- Batch Service ---------------
+
+  #BatchService
+  batch-service:
+    image: registry.gitlab.com/anvacon-team/feacna-batch
+    container_name: batch-service
+    restart: always
+    ports:
+      - 35102:8081
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres-host/batchdb?reWriteBatchedInserts=true
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=batch
+      - SERVER_PORT=8081
+    depends_on:
+      postgres-host:
+        condition: service_started
+
+# --------------- Volumes ---------------
+
+volumes:
+  batch-db-data:

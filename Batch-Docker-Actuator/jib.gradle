@@ -1,0 +1,14 @@
+jib {
+    container.creationTime = 'USE_CURRENT_TIMESTAMP'
+    from {
+        image = 'bellsoft/liberica-openjre-alpine-musl:17.0.5-8'
+    }
+    to {
+        image = "${System.getenv("CI_REGISTRY")}/${System.getenv("CI_PROJECT_PATH")}"
+        tags = [project.version.toString(), 'latest']
+        auth {
+            username = "gitlab-ci-token"
+            password = "${System.getenv("CI_TOKEN")}"
+        }
+    }
+}
