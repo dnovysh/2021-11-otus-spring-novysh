@@ -1,0 +1,29 @@
+spring:
+  datasource:
+    url: jdbc:h2:mem:booksdb-test
+  shell:
+    interactive:
+      enabled: false
+
+  sql:
+    init:
+      mode: embedded
+      data-locations: test-data.sql
+
+  jpa:
+    generate-ddl: false
+
+    show-sql: true
+
+    hibernate:
+      ddl-auto: none
+
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQL95Dialect
+        format_sql: false
+
+  jackson:
+    property-naming-strategy: LOWER_CAMEL_CASE
+    serialization:
+      indent-output: true
