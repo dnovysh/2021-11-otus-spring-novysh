@@ -1,0 +1,33 @@
+image: bellsoft/liberica-openjdk-alpine-musl:17.0.5-8
+
+stages:
+  - build
+  - test
+  - publish
+
+before_script:
+  - export GRADLE_USER_HOME=$(pwd)/.gradle
+  - chmod +x ./gradlew
+
+cache:
+  key:
+    files:
+      - .gradle/wrapper/gradle-wrapper.properties
+  paths:
+    - .gradle/wrapper
+    - .gradle/caches
+
+build:
+  stage: build
+  script:
+    - ./gradlew clean build -x test
+
+test:
+  stage: test
+  script:
+    - ./gradlew check
+
+publish:
+  stage: publish
+  script:
+    - ./gradlew jib

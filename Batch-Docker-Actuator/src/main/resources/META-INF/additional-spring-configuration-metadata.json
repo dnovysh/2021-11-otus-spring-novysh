@@ -1,0 +1,9 @@
+{
+  "properties": [
+    {
+      "name": "app-batch.data.tnved-okpd2",
+      "type": "java.lang.String",
+      "description": "Path for tnved-okpd2.xlsx file."
+    }
+  ]
+}

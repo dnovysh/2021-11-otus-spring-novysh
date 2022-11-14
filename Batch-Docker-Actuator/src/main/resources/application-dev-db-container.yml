@@ -1,0 +1,5 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://container-db-host:5432/dbname?reWriteBatchedInserts=true
+    username: postgres
+    password: postgres
