@@ -1,0 +1,45 @@
+GET http://localhost:8080/func/products
+Accept: application/json
+
+###
+GET http://localhost:8080/func/products?name=cherokee
+Accept: application/json
+
+###
+GET http://localhost:8080/func/products?categoryName=mug
+Accept: application/json
+
+###
+GET http://localhost:8080/func/products/6377c480a2a40536556eb5bd
+Accept: application/json
+
+###
+POST http://localhost:8080/func/products
+Content-Type: application/json
+
+{
+  "sku": "COFFEEMUG-1005",
+  "name": "Coffee Mug - Columbia",
+  "description": "Do you love mathematics? If so, then you need this elegant coffee mug with an amazing fractal design.",
+  "price": {
+    "value": 18.99,
+    "currency": "USD"
+  },
+  "unitsInStock": 100,
+  "category": {
+    "externalId": 2,
+    "name": "Coffee Mugs"
+  }
+}
+
+###
+PUT http://localhost:8080/func/products/6377ca61a2a40536556eb5c5/price
+Content-Type: application/json
+
+{
+  "value": 12.99,
+  "currency": "RUB"
+}
+
+###
+DELETE http://localhost:8080/func/products/6377c480a2a40536556eb5bb

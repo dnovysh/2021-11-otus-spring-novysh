@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link data-th-href="@{/css/bootstrap.min.css}" rel="stylesheet">
+    <link data-th-href="@{/css/main.css}" rel="stylesheet">
+    <title>Productflux</title>
+</head>
+<body>
+
+<div class="container">
+
+    <div class="row">
+        <div id="title">
+            <h1>Spring WebFlux + Thymeleaf</h1>
+        </div>
+        <table id="allProducts" class="table table-striped">
+            <thead>
+            <tr>
+                <th>Sku</th>
+                <th width="50%">Name</th>
+                <th>Price</th>
+                <th>Curr</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr class="result" data-th-each="product : ${products}">
+                <td>[[${product.sku}]]</td>
+                <td>[[${product.name}]]</td>
+                <td>[[${product.price.value}]]</td>
+                <td>[[${product.price.currency}]]</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+</div>
+</body>
+</html>
